@@ -26,28 +26,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageencryptormodel.cpp \
-    maps/chaoticmap1d.cpp \
-    maps/pwlcm.cpp \
-    maps/tentmap.cpp \
-    maps/logisticmap.cpp \
-    maps/chaoticmap3d.cpp \
-    maps/lorenzmap.cpp \
-    maps/combined3dmap.cpp \
-    maps/baker3dmap.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
     imageencryptorpresenter.h \
-    maps/chaoticmap1d.h \
-    maps/pwlcm.h \
-    maps/tentmap.h \
-    maps/logisticmap.h \
-    maps/chaoticmap3d.h \
-    maps/lorenzmap.h \
-    maps/combined3dmap.h \
-    maps/baker3dmap.h
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
     resources.qrc
+
+unix|win32: LIBS += -L$$PWD/../build-ChaoticMaps-Desktop_Qt_5_9_1_MinGW_32bit-Release/release/ -lChaoticMaps
+
+INCLUDEPATH += $$PWD/../ChaoticMaps
+DEPENDPATH += $$PWD/../ChaoticMaps
