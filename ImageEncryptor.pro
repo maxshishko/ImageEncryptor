@@ -24,9 +24,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    imageencryptormodel.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    imageencryptormodel.h \
+    imageencryptorpresenter.h
 
 FORMS    += mainwindow.ui
 
