@@ -5,19 +5,9 @@ QImage ImageEncryptorModel::getSrcImage() const
     return srcImage;
 }
 
-void ImageEncryptorModel::setSrcImage(const QImage &value)
-{
-    srcImage = value;
-}
-
 QImage ImageEncryptorModel::getDstImage() const
 {
     return dstImage;
-}
-
-void ImageEncryptorModel::setDstImage(const QImage &value)
-{
-    dstImage = value;
 }
 
 ImageEncryptorModel::ImageEncryptorModel(ImageEncryptorPresenter *presenter):
@@ -26,14 +16,29 @@ ImageEncryptorModel::ImageEncryptorModel(ImageEncryptorPresenter *presenter):
 
 }
 
-bool ImageEncryptorModel::loadImage(const QString filename)
+bool ImageEncryptorModel::loadSrcImage(const QString filename)
 {
     QImage img = QImage(filename);
-    if(img.isNull())
-        return false;
+    if(!img.isNull()){
+        srcImage = img;
+        dstImage = QImage();
+        presenter->updateImages();
+        return true;
+    }
+    return false;
+}
 
-    srcImage = img;
-    dstImage = QImage();
+bool ImageEncryptorModel::saveDstImage(const QString filename)
+{
+    if(!dstImage.isNull() && dstImage.save(filename))
+        return true;
+    return false;
+}
+
+void ImageEncryptorModel::swapPlainCipher()
+{
+    QImage tmp = srcImage;
+    srcImage.swap(dstImage);
+    dstImage.swap(tmp);
     presenter->updateImages();
-    return true;
 }

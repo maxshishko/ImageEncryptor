@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete model;
 }
 
 void MainWindow::updateImages()
@@ -23,17 +24,63 @@ void MainWindow::updateImages()
 
 void MainWindow::on_actionOpen_triggered()
 {
+    QFileDialog* dialog = createImageFileDialog(QFileDialog::AcceptOpen);
+
+    bool opened = false;
+    while(dialog->exec() == QDialog::Accepted &&
+          !(opened= model->loadSrcImage(dialog->selectedFiles().first()))){
+        if(!opened)
+            QMessageBox::critical(this, tr("Error!"), tr("Can't open image."));
+    }
+    ui->tabWidget->setCurrentIndex(0);
+
+    delete dialog;
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    if(model->getDstImage().isNull()){
+        QMessageBox::critical(this, tr("Error"), tr("Image is empty."));
+        return;
+    }
+
+    QFileDialog* dialog = createImageFileDialog(QFileDialog::AcceptSave);
+
+    bool saved = false;
+    while(dialog->exec() == QDialog::Accepted &&
+          !(saved = model->saveDstImage(dialog->selectedFiles().first()))){
+        if(!saved)
+            QMessageBox::critical(this, tr("Error!"), tr("Can't save image."));
+    }
+
+    delete dialog;
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    exit(0);
+}
+
+QFileDialog* MainWindow::createImageFileDialog(int acceptMode){
     QStringList mimeTypeFilters;
     foreach (const QByteArray &mimeTypeName, QImageReader::supportedMimeTypes())
         mimeTypeFilters.append(mimeTypeName);
     mimeTypeFilters.sort();
-    QFileDialog dialog(this, tr("Open File"),
-                       windowFilePath());
-    dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setMimeTypeFilters(mimeTypeFilters);
-    dialog.selectMimeTypeFilter("image");
 
-    while(dialog.exec() == QDialog::Accepted &&
-          !model->loadImage(dialog.selectedFiles().first())){}
-    ui->tabWidget->setCurrentIndex(0);
+
+    QFileDialog *dialog;
+    if(acceptMode == QFileDialog::AcceptSave)
+        dialog = new QFileDialog(this, tr("Save Image"), windowFilePath());
+    else
+        dialog = new QFileDialog(this, tr("Open Image"), windowFilePath());
+
+    dialog->setAcceptMode((QFileDialog::AcceptMode)acceptMode);
+    dialog->setMimeTypeFilters(mimeTypeFilters);
+    dialog->selectMimeTypeFilter("image");
+    return dialog;
+}
+
+void MainWindow::on_actionPlain_Cipher_triggered()
+{
+    model->swapPlainCipher();
 }

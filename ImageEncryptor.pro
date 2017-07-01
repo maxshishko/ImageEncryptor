@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    imageencryptormodel.cpp
+    imageencryptormodel.cpp \
+    maps/chaoticmap.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
-    imageencryptorpresenter.h
+    imageencryptorpresenter.h \
+    maps/chaoticmap.h
 
 FORMS    += mainwindow.ui
 

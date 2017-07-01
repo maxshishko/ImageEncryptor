@@ -17,12 +17,12 @@ private:
 public:
     ImageEncryptorModel(ImageEncryptorPresenter *presenter);
 
-    bool loadImage(const QString filename);
+    bool loadSrcImage(const QString filename);
+    bool saveDstImage(const QString filename);
+    void swapPlainCipher();
 
     QImage getSrcImage() const;
-    void setSrcImage(const QImage &value);
     QImage getDstImage() const;
-    void setDstImage(const QImage &value);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

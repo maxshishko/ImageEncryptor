@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QMessageBox>
 
 #include "imageencryptormodel.h"
 #include "imageencryptorpresenter.h"
@@ -25,10 +26,18 @@ public:
 private slots:
     void on_actionOpen_triggered();
 
+    void on_actionSave_triggered();
+
+    void on_actionQuit_triggered();
+
+    void on_actionPlain_Cipher_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     ImageEncryptorModel *model;
+
+    QFileDialog *createImageFileDialog(int acceptMode);
 };
 
 #endif // MAINWINDOW_H
