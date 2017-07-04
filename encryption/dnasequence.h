@@ -28,6 +28,7 @@ public:
     const DNASequence operator^(const DNASequence &l, const DNASequence &r);
     QByteArray toByteArray(int encoding);
     DNA &operator[](int index);
+    void crossover(DNASequence* second, int point);
 };
 
 #endif // DNASEQUENCE_H
