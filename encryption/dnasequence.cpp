@@ -1,5 +1,10 @@
 #include "dnasequence.h"
 
+QVector<DNA> DNASequence::getSequence() const
+{
+    return sequence;
+}
+
 DNASequence::DNASequence()
 {
 
@@ -35,6 +40,11 @@ void DNASequence::clear()
 int DNASequence::size()
 {
     return sequence.size();
+}
+
+void DNASequence::append(DNASequence seq)
+{
+    sequence.append(seq.getSequence());
 }
 
 DNASequence DNASequence::mid(int pos, int len)
