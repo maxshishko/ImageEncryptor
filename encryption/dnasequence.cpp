@@ -8,7 +8,7 @@ DNASequence::DNASequence()
 DNASequence::DNASequence(QByteArray ba, int encoding)
 {
     for(int i = 0; i < ba.size(); i++)
-        push_back(ba[i], encoding);
+        push_back(*reinterpret_cast<uchar*>(&ba[i]), encoding);
 }
 
 void DNASequence::push_back(DNA el)
@@ -16,7 +16,7 @@ void DNASequence::push_back(DNA el)
     sequence.push_back(el);
 }
 
-void DNASequence::push_back(char byte, int encoding)
+void DNASequence::push_back(uchar byte, int encoding)
 {
     for(int i = 0; i < 4; i++)
         sequence.push_back(DNA((byte>>(2*(3-i)))&3, encoding));
@@ -35,6 +35,11 @@ void DNASequence::clear()
 int DNASequence::size()
 {
     return sequence.size();
+}
+
+DNASequence DNASequence::mid(int pos, int len)
+{
+    return DNASequence(sequence.mid(pos, len));
 }
 
 const DNASequence DNASequence::operator^(const DNASequence &l, const DNASequence &r)
