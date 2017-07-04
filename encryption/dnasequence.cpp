@@ -80,3 +80,15 @@ DNA &DNASequence::operator[](int index)
 {
     return sequence[index];
 }
+
+void DNASequence::crossover(DNASequence *second, int point)
+{
+    if(this->sequence.size() < point || second->size() < point)
+        return;
+
+    QVector<DNA> tmpseq = this->sequence.mid(point);
+    this->sequence.remove(point, this->sequence.size()-point);
+    this->sequence += second->sequence.mid(point);
+    second->sequence.remove(point, second->size()-point);
+    second->sequence += tmpseq;
+}
