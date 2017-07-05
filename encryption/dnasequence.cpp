@@ -60,6 +60,32 @@ const DNASequence DNASequence::operator^(const DNASequence &l, const DNASequence
     return result;
 }
 
+const DNASequence DNASequence::fSerialXOR(const DNASequence &mask)
+{
+    DNASequence result;
+    if(mask.size() != sequence.size())
+        return result;
+
+    DNA last = mask[0]^sequence[0];
+    result.push_back(last);
+    for(int i = 1; i < sequence.size(); i++){
+        last = (mask[i]^sequence[i])^last;
+        result.push_back(last);
+    }
+    return result;
+}
+
+const DNASequence DNASequence::iSerialXOR(const DNASequence &mask)
+{
+    DNASequence result;
+    if(mask.size()!=sequence.size())
+        return result;
+    result.push_back(mask[0]^sequence[0]);
+    for(int i = 1; i < sequence.size(); i++)
+        result.push_back(mask[i]^sequence[i]^sequence[i-1]);
+    return result;
+}
+
 QByteArray DNASequence::toByteArray(int encoding)
 {
     QByteArray ba;

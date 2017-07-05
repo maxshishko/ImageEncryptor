@@ -26,6 +26,8 @@ public:
     void append(DNASequence seq);
     DNASequence mid(int pos, int len = -1);
     const DNASequence operator^(const DNASequence &l, const DNASequence &r);
+    const DNASequence fSerialXOR(const DNASequence &mask);
+    const DNASequence iSerialXOR(const DNASequence &mask);
     QByteArray toByteArray(int encoding);
     DNA &operator[](int index);
     void crossover(DNASequence* second, int point);
