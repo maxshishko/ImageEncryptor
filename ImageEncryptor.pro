@@ -26,10 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageencryptormodel.cpp \
+    encryption/imageencryptor.cpp \
+    encryption/evolutionencryptor.cpp \
+    encryption/dnasequence.cpp \
+    encryption/dna.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
     imageencryptorpresenter.h \
+    encryption/imageencryptor.h \
+    encryption/evolutionencryptor.h \
+    encryption/dnasequence.h \
+    encryption/dna.h
 
 FORMS    += mainwindow.ui
 

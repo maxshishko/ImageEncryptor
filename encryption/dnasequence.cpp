@@ -12,8 +12,11 @@ DNASequence::DNASequence()
 
 DNASequence::DNASequence(QByteArray ba, int encoding)
 {
-    for(int i = 0; i < ba.size(); i++)
-        push_back(*reinterpret_cast<uchar*>(&ba[i]), encoding);
+    char tmp;
+    for(int i = 0; i < ba.size(); i++){
+        tmp = ba[i];
+        push_back(*reinterpret_cast<uchar*>(&tmp), encoding);
+    }
 }
 
 void DNASequence::push_back(DNA el)
@@ -37,7 +40,7 @@ void DNASequence::clear()
     sequence.clear();
 }
 
-int DNASequence::size()
+int DNASequence::size() const
 {
     return sequence.size();
 }
@@ -52,49 +55,49 @@ DNASequence DNASequence::mid(int pos, int len)
     return DNASequence(sequence.mid(pos, len));
 }
 
-const DNASequence DNASequence::operator^(const DNASequence &l, const DNASequence &r)
+DNASequence DNASequence::operator^(DNASequence &r)
 {
     DNASequence result;
-    for(int i = 0, j = 0; i < l.size(); i++, j++, j = j%r.size())
-        result.push_back(l[i]^r[j]);
+    for(int i = 0, j = 0; i < r.size(); i++, j++, j = j%r.size())
+        result.push_back(this->sequence[i]^r[j]);
     return result;
 }
 
-const DNASequence DNASequence::fSerialXOR(const DNASequence &mask)
+DNASequence *DNASequence::fSerialXOR(DNASequence *mask)
 {
-    DNASequence result;
-    if(mask.size() != sequence.size())
+    DNASequence *result = new DNASequence;
+    if(mask->size() != sequence.size())
         return result;
 
-    DNA last = mask[0]^sequence[0];
-    result.push_back(last);
+    DNA last = (*mask)[0]^sequence[0];
+    result->push_back(last);
     for(int i = 1; i < sequence.size(); i++){
-        last = (mask[i]^sequence[i])^last;
-        result.push_back(last);
+        last = ((*mask)[i]^sequence[i])^last;
+        result->push_back(last);
     }
     return result;
 }
 
-const DNASequence DNASequence::iSerialXOR(const DNASequence &mask)
+DNASequence *DNASequence::iSerialXOR(DNASequence *mask)
 {
-    DNASequence result;
-    if(mask.size()!=sequence.size())
+    DNASequence *result = new DNASequence;
+    if(mask->size()!=sequence.size())
         return result;
-    result.push_back(mask[0]^sequence[0]);
+    result->push_back((*mask)[0]^sequence[0]);
     for(int i = 1; i < sequence.size(); i++)
-        result.push_back(mask[i]^sequence[i]^sequence[i-1]);
+        result->push_back((*mask)[i]^sequence[i]^sequence[i-1]);
     return result;
 }
 
 QByteArray DNASequence::toByteArray(int encoding)
 {
     QByteArray ba;
-    char c = 0;
+    uchar c = 0;
     for(int i = 0, j = 0; i < sequence.size(); i++, j++){
-        c+=sequence[i].getValue(encoding);
         c = c<<2;
+        c+=sequence[i].getValue(encoding);
         if(j==3){
-            ba.push_back(c);
+            ba.push_back(*reinterpret_cast<char*>(&c));
             c = 0;
             j = -1;
         }

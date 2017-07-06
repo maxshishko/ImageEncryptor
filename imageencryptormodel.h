@@ -4,6 +4,8 @@
 #include <QImage>
 
 #include "imageencryptorpresenter.h"
+#include "encryption/imageencryptor.h"
+#include "encryption/evolutionencryptor.h"
 
 class ImageEncryptorModel
 {
@@ -14,7 +16,11 @@ private:
     QImage srcImage;
     QImage dstImage;
 
+    ImageEncryptor *encryptor;
+
 public:
+    enum EncryptionMethods{DNA, Yoon, EvolutionAlgorithm};
+
     ImageEncryptorModel(ImageEncryptorPresenter *presenter);
 
     bool loadSrcImage(const QString filename);
@@ -23,6 +29,17 @@ public:
 
     QImage getSrcImage() const;
     QImage getDstImage() const;
+
+    bool encrypt();
+    bool decrypt();
+
+    void setRandomParameters();
+    void changeEncryptor(int encryptor);
+
+    void setEvolutionEncryptorParameters(int popSize, double mutationRate, double entropy);
+    void setEvolutionEncryptorParameters(QString decryptionKey);
+    bool getEvolutionEncryptorParameters(int &popSize, double &mutationRate, double &entropy);
+    bool getEvolutionEncryptorParameters(QString &decryptionKey);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

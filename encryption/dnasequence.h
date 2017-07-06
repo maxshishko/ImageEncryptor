@@ -22,12 +22,12 @@ public:
     void push_back(uchar byte, int encoding);
     void pop_back();
     void clear();
-    int size();
+    int size() const;
     void append(DNASequence seq);
     DNASequence mid(int pos, int len = -1);
-    const DNASequence operator^(const DNASequence &l, const DNASequence &r);
-    const DNASequence fSerialXOR(const DNASequence &mask);
-    const DNASequence iSerialXOR(const DNASequence &mask);
+    DNASequence operator^(DNASequence &r);
+    DNASequence *fSerialXOR(DNASequence *mask);
+    DNASequence *iSerialXOR(DNASequence *mask);
     QByteArray toByteArray(int encoding);
     DNA &operator[](int index);
     void crossover(DNASequence* second, int point);
