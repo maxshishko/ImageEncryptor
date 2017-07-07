@@ -36,7 +36,8 @@ void DNA::setValue(int value, int encoding)
 
 const DNA DNA::operator^(const DNA &r) const
 {
-    return DNA(static_cast<int>(this->getValue())^static_cast<int>(r.getValue()));
+    DNA result(static_cast<Nucleotide>(static_cast<int>(this->getValue())^static_cast<int>(r.getValue())));
+    return result;
 }
 
 DNA::DNA()
