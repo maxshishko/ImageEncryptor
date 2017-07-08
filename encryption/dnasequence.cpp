@@ -19,6 +19,16 @@ DNASequence::DNASequence(QByteArray ba, int encoding)
     }
 }
 
+DNASequence::DNASequence(const DNASequence &seq)
+{
+    this->sequence = seq.sequence;
+}
+
+DNASequence::DNASequence(int size)
+{
+    sequence = QVector<DNA>(size);
+}
+
 void DNASequence::push_back(DNA el)
 {
     sequence.push_back(el);
@@ -58,7 +68,7 @@ DNASequence DNASequence::mid(int pos, int len)
 DNASequence DNASequence::operator^(DNASequence &r)
 {
     DNASequence result;
-    for(int i = 0, j = 0; i < r.size(); i++, j++, j = j%r.size())
+    for(int i = 0, j = 0; i < this->sequence.size(); i++, j++, j = j%r.size())
         result.push_back(this->sequence[i]^r[j]);
     return result;
 }
@@ -120,4 +130,14 @@ void DNASequence::crossover(DNASequence *second, int point)
     this->sequence += second->sequence.mid(point);
     second->sequence.remove(point, second->size()-point);
     second->sequence += tmpseq;
+}
+
+bool DNASequence::swap(int i, int j)
+{
+    if(i < 0 || i >= sequence.size() || j < 0 || j >= sequence.size())
+        return false;
+    DNA tmp = sequence[i];
+    sequence[i] = sequence[j];
+    sequence[j] = tmp;
+    return true;
 }

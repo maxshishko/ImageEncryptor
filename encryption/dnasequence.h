@@ -17,6 +17,8 @@ protected:
 public:
     DNASequence();
     DNASequence(QByteArray ba, int encoding);
+    DNASequence(const DNASequence &seq);
+    DNASequence(int size);
 
     void push_back(DNA el);
     void push_back(uchar byte, int encoding);
@@ -31,6 +33,7 @@ public:
     QByteArray toByteArray(int encoding);
     DNA &operator[](int index);
     void crossover(DNASequence* second, int point);
+    bool swap(int i, int j);
 };
 
 #endif // DNASEQUENCE_H
