@@ -147,7 +147,7 @@
       <item row="1" column="0" alignment="Qt::AlignBottom">
        <widget class="QTabWidget" name="tabWidgetEncryptionMethod">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="tabBarAutoHide">
          <bool>true</bool>
@@ -170,7 +170,7 @@
              </widget>
             </item>
             <item row="1" column="3">
-             <widget class="QLineEdit" name="lineEdit_y0">
+             <widget class="QLineEdit" name="lineEditDNAy0">
               <property name="minimumSize">
                <size>
                 <width>90</width>
@@ -193,7 +193,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_x0">
+             <widget class="QLineEdit" name="lineEditDNAx0">
               <property name="minimumSize">
                <size>
                 <width>90</width>
@@ -232,7 +232,7 @@
              </widget>
             </item>
             <item row="1" column="5">
-             <widget class="QLineEdit" name="lineEdit_z0">
+             <widget class="QLineEdit" name="lineEditDNAz0">
               <property name="minimumSize">
                <size>
                 <width>90</width>
@@ -255,7 +255,7 @@
              </widget>
             </item>
             <item row="2" column="7">
-             <widget class="QComboBox" name="comboBox_Encoding">
+             <widget class="QComboBox" name="comboBoxDNAEncoding">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>1</horstretch>
@@ -318,7 +318,7 @@
              </widget>
             </item>
             <item row="1" column="7">
-             <widget class="QComboBox" name="comboBox_ChaoticMap">
+             <widget class="QComboBox" name="comboBoxDNAChaoticMap">
               <property name="currentIndex">
                <number>0</number>
               </property>
@@ -350,7 +350,7 @@
              </widget>
             </item>
             <item row="2" column="1" colspan="5">
-             <widget class="QLineEdit" name="lineEdit_key">
+             <widget class="QLineEdit" name="lineEditDNAhash">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                 <horstretch>10</horstretch>
@@ -749,17 +749,17 @@
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>tabWidgetEncryptionMethod</tabstop>
-  <tabstop>lineEdit_x0</tabstop>
-  <tabstop>lineEdit_y0</tabstop>
-  <tabstop>lineEdit_z0</tabstop>
-  <tabstop>comboBox_ChaoticMap</tabstop>
-  <tabstop>comboBox_Encoding</tabstop>
+  <tabstop>lineEditDNAx0</tabstop>
+  <tabstop>lineEditDNAy0</tabstop>
+  <tabstop>lineEditDNAz0</tabstop>
+  <tabstop>comboBoxDNAChaoticMap</tabstop>
+  <tabstop>comboBoxDNAEncoding</tabstop>
   <tabstop>lineEdit_X</tabstop>
   <tabstop>lineEdit_P</tabstop>
   <tabstop>lineEdit_K</tabstop>
   <tabstop>buttotnEncrypt</tabstop>
   <tabstop>buttonDecrypt</tabstop>
-  <tabstop>lineEdit_key</tabstop>
+  <tabstop>lineEditDNAhash</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>tabWidgetImage</tabstop>
   <tabstop>scrollArea_2</tabstop>

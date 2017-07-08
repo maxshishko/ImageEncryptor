@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <ctime>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -35,11 +37,25 @@ void MainWindow::updateEvolutionEncryptionParameters()
     ui->lineEdit_EADeckey->setText(decryptionKey);
 }
 
+void MainWindow::updateDNAEncryptionParameters()
+{
+    double x, y, z;
+    int encoding;
+    QString hash;
+    model->getDNAEncryptorParameters(x, y, z, encoding, hash);
+    ui->lineEditDNAx0->setText(QString::number(x));
+    ui->lineEditDNAy0->setText(QString::number(y));
+    ui->lineEditDNAz0->setText(QString::number(z));
+    ui->comboBoxDNAEncoding->setCurrentIndex(encoding);
+    ui->lineEditDNAhash->setText(hash);
+}
+
 void MainWindow::updateParameters()
 {
     try{
         switch (ui->tabWidgetEncryptionMethod->currentIndex()) {
         case 0:
+            updateDNAEncryptionParameters();
             break;
         case 1:
             break;
@@ -99,7 +115,6 @@ QFileDialog* MainWindow::createImageFileDialog(int acceptMode){
         mimeTypeFilters.append(mimeTypeName);
     mimeTypeFilters.sort();
 
-
     QFileDialog *dialog;
     if(acceptMode == QFileDialog::AcceptSave)
         dialog = new QFileDialog(this, tr("Save Image"), windowFilePath());
@@ -151,6 +166,14 @@ bool MainWindow::setupEncryptionParameters()
     try{
         switch (ui->tabWidgetEncryptionMethod->currentIndex()) {
         case 0:
+            model->setDNAEncryptorParameters(
+                        ui->lineEditDNAx0->text().toDouble(),
+                        ui->lineEditDNAy0->text().toDouble(),
+                        ui->lineEditDNAz0->text().toDouble(),
+                        ui->comboBoxDNAChaoticMap->currentIndex(),
+                        ui->comboBoxDNAEncoding->currentIndex(),
+                        ui->lineEditDNAhash->text()
+                        );
             break;
         case 1:
             break;
@@ -163,10 +186,14 @@ bool MainWindow::setupEncryptionParameters()
             break;
         }
     }
-    catch(std::exception e){
+    catch(std::invalid_argument e){
         QMessageBox::critical(this, QString("Error!"), QString::fromLocal8Bit(e.what()));
         return false;
     }
+    catch(std::exception e){
+        return false;
+    }
+
     return true;
 }
 
@@ -177,6 +204,8 @@ void MainWindow::on_actionPlain_Cipher_triggered()
 
 void MainWindow::on_buttonSetRandomParameters_clicked()
 {
+    setupEncryptor();
+    setupEncryptionParameters();
     model->setRandomParameters();
 }
 

@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     encryption/imageencryptor.cpp \
     encryption/evolutionencryptor.cpp \
     encryption/dnasequence.cpp \
-    encryption/dna.cpp
+    encryption/dna.cpp \
+    encryption/dnaencryptor.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     encryption/imageencryptor.h \
     encryption/evolutionencryptor.h \
     encryption/dnasequence.h \
-    encryption/dna.h
+    encryption/dna.h \
+    encryption/dnaencryptor.h
 
 FORMS    += mainwindow.ui
 

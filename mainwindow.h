@@ -56,6 +56,7 @@ private:
     bool setupEncryptor();
     bool setupEncryptionParameters();
     void updateEvolutionEncryptionParameters();
+    void updateDNAEncryptionParameters();
 };
 
 #endif // MAINWINDOW_H

@@ -40,6 +40,10 @@ void ImageEncryptorModel::changeEncryptor(int encryptor)
 {
     switch (encryptor) {
     case EncryptionMethods::DNA:
+        if(!dynamic_cast<DNAEncryptor*>(this->encryptor)){
+            delete this->encryptor;
+            this->encryptor = new DNAEncryptor();
+        }
         break;
     case EncryptionMethods::Yoon:
         break;
@@ -48,6 +52,7 @@ void ImageEncryptorModel::changeEncryptor(int encryptor)
             delete this->encryptor;
             this->encryptor = new EvolutionEncryptor();
         }
+        break;
     default:
         break;
     }
@@ -87,6 +92,50 @@ bool ImageEncryptorModel::getEvolutionEncryptorParameters(QString &decryptionKey
     if(!evEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     decryptionKey = evEncryptor->getDecryptionKey();
+}
+
+void ImageEncryptorModel::setDNAEncryptorParameters(double x, double y, double z, int map, int encoding, QString hash)
+{
+    DNAEncryptor *dnaEncryptor = dynamic_cast<DNAEncryptor*>(encryptor);
+    if(!dnaEncryptor)
+        throw std::logic_error("Invalid encryptor selected.");
+    dnaEncryptor->setMap(getChaoticMap(map));
+    dnaEncryptor->setX(x);
+    dnaEncryptor->setY(y);
+    dnaEncryptor->setZ(z);
+    dnaEncryptor->setEncoding(encoding);
+    if(hash.size() == 0)
+        hash = QString(64, '0');
+    dnaEncryptor->setHash(hash);
+}
+
+bool ImageEncryptorModel::getDNAEncryptorParameters(double &x, double &y, double &z, int &encoding, QString &hash)
+{
+    DNAEncryptor *dnaEncryptor = dynamic_cast<DNAEncryptor*>(encryptor);
+    if(!dnaEncryptor)
+        throw std::logic_error("Invalid encryptor selected.");
+    x = dnaEncryptor->getX();
+    y = dnaEncryptor->getY();
+    z = dnaEncryptor->getZ();
+    encoding = dnaEncryptor->getEncoding();
+    hash = dnaEncryptor->getHash();
+}
+
+ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)
+{
+    switch (map) {
+    case 0:
+        return new LorenzMap;
+    case 1:
+        return new Combined3DMap(new PWLCM, new PWLCM, new PWLCM);
+    case 2:
+        return new Combined3DMap(new LogisticMap, new LogisticMap, new LogisticMap);
+    case 3:
+        return new Combined3DMap(new TentMap, new TentMap, new TentMap);
+    case 4:
+        return new Baker3DMap;
+    }
+    return new LorenzMap;
 }
 
 ImageEncryptorModel::ImageEncryptorModel(ImageEncryptorPresenter *presenter):
