@@ -1,5 +1,5 @@
-#ifndef DNAENCRYPTOR_H
-#define DNAENCRYPTOR_H
+#ifndef EVOLUTIONENCRYPTOR_H
+#define EVOLUTIONENCRYPTOR_H
 
 #include <stdexcept>
 #include <QRegularExpression>
@@ -77,4 +77,4 @@ public:
     void setMap(ChaoticMap1D *value);
 };
 
-#endif // DNAENCRYPTOR_H
+#endif // EVOLUTIONENCRYPTOR_H
