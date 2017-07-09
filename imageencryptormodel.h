@@ -7,6 +7,7 @@
 #include "encryption/imageencryptor.h"
 #include "encryption/evolutionencryptor.h"
 #include "encryption/dnaencryptor.h"
+#include "encryption/yoonencryptor.h"
 #include "maps.h"
 
 class ImageEncryptorModel
@@ -47,6 +48,9 @@ public:
 
     void setDNAEncryptorParameters(double x, double y, double z, int map, int encoding, QString hash);
     bool getDNAEncryptorParameters(double &x, double &y, double &z, int &encoding, QString &hash);
+
+    void setYoonEncryptorParameters(double init, double param, double K);
+    bool getYoonEncryptorParameters(double &init, double &param, int &K);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

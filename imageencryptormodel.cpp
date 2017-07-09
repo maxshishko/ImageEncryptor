@@ -46,6 +46,10 @@ void ImageEncryptorModel::changeEncryptor(int encryptor)
         }
         break;
     case EncryptionMethods::Yoon:
+        if(!dynamic_cast<YoonEncryptor*>(this->encryptor)){
+            delete this->encryptor;
+            this->encryptor = new YoonEncryptor();
+        }
         break;
     case EncryptionMethods::EvolutionAlgorithm:
         if(!dynamic_cast<EvolutionEncryptor*>(this->encryptor)){
@@ -119,6 +123,26 @@ bool ImageEncryptorModel::getDNAEncryptorParameters(double &x, double &y, double
     z = dnaEncryptor->getZ();
     encoding = dnaEncryptor->getEncoding();
     hash = dnaEncryptor->getHash();
+}
+
+void ImageEncryptorModel::setYoonEncryptorParameters(double init, double param, double K)
+{
+    YoonEncryptor *yoonEncryptor = dynamic_cast<YoonEncryptor*>(encryptor);
+    if(!yoonEncryptor)
+        throw std::logic_error("Invalid encryptor selected.");
+    yoonEncryptor->setInit(init);
+    yoonEncryptor->setParam(param);
+    yoonEncryptor->setK(K);
+}
+
+bool ImageEncryptorModel::getYoonEncryptorParameters(double &init, double &param, int &K)
+{
+    YoonEncryptor *yoonEncryptor = dynamic_cast<YoonEncryptor*>(encryptor);
+    if(!yoonEncryptor)
+        throw std::logic_error("Invalid encryptor selected.");
+    init = yoonEncryptor->getInit();
+    param = yoonEncryptor->getParam();
+    K = yoonEncryptor->getK();
 }
 
 ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)

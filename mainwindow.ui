@@ -178,7 +178,7 @@
                </size>
               </property>
               <property name="text">
-               <string>6.21</string>
+               <string>0</string>
               </property>
              </widget>
             </item>
@@ -204,7 +204,7 @@
                <string/>
               </property>
               <property name="text">
-               <string>10.15</string>
+               <string>0</string>
               </property>
              </widget>
             </item>
@@ -240,7 +240,7 @@
                </size>
               </property>
               <property name="text">
-               <string>20.38</string>
+               <string>0</string>
               </property>
              </widget>
             </item>
@@ -394,10 +394,10 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="1" column="2">
-           <widget class="QLineEdit" name="lineEdit_X"/>
+           <widget class="QLineEdit" name="lineEditYoonX"/>
           </item>
           <item row="1" column="5">
-           <widget class="QLineEdit" name="lineEdit_P"/>
+           <widget class="QLineEdit" name="lineEditYoonP"/>
           </item>
           <item row="1" column="7">
            <widget class="QLabel" name="label_9">
@@ -448,7 +448,7 @@
            </widget>
           </item>
           <item row="1" column="8" colspan="2">
-           <widget class="QLineEdit" name="lineEdit_K"/>
+           <widget class="QLineEdit" name="lineEditYoonK"/>
           </item>
           <item row="0" column="0" colspan="10" alignment="Qt::AlignBottom">
            <widget class="QLabel" name="label_5">
@@ -483,7 +483,7 @@
              <number>2</number>
             </property>
             <property name="value">
-             <number>4</number>
+             <number>2</number>
             </property>
            </widget>
           </item>
@@ -503,7 +503,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.500000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -522,7 +522,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>7.300000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -754,9 +754,9 @@
   <tabstop>lineEditDNAz0</tabstop>
   <tabstop>comboBoxDNAChaoticMap</tabstop>
   <tabstop>comboBoxDNAEncoding</tabstop>
-  <tabstop>lineEdit_X</tabstop>
-  <tabstop>lineEdit_P</tabstop>
-  <tabstop>lineEdit_K</tabstop>
+  <tabstop>lineEditYoonX</tabstop>
+  <tabstop>lineEditYoonP</tabstop>
+  <tabstop>lineEditYoonK</tabstop>
   <tabstop>buttotnEncrypt</tabstop>
   <tabstop>buttonDecrypt</tabstop>
   <tabstop>lineEditDNAhash</tabstop>

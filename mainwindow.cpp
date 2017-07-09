@@ -37,6 +37,16 @@ void MainWindow::updateEvolutionEncryptionParameters()
     ui->lineEdit_EADeckey->setText(decryptionKey);
 }
 
+void MainWindow::updateYoonEncryptionParameters()
+{
+    double x, p;
+    int K;
+    model->getYoonEncryptorParameters(x, p, K);
+    ui->lineEditYoonX->setText(QString::number(x));
+    ui->lineEditYoonP->setText(QString::number(p));
+    ui->lineEditYoonK->setText(QString::number(K));
+}
+
 void MainWindow::updateDNAEncryptionParameters()
 {
     double x, y, z;
@@ -58,6 +68,7 @@ void MainWindow::updateParameters()
             updateDNAEncryptionParameters();
             break;
         case 1:
+            updateYoonEncryptionParameters();
             break;
         case 2:
             updateEvolutionEncryptionParameters();
@@ -176,6 +187,11 @@ bool MainWindow::setupEncryptionParameters()
                         );
             break;
         case 1:
+            model->setYoonEncryptorParameters(
+                        ui->lineEditYoonX->text().toDouble(),
+                        ui->lineEditYoonP->text().toDouble(),
+                        ui->lineEditYoonK->text().toInt()
+                        );
             break;
         case 2:
             model->setEvolutionEncryptorParameters(

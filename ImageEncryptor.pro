@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     encryption/evolutionencryptor.cpp \
     encryption/dnasequence.cpp \
     encryption/dna.cpp \
-    encryption/dnaencryptor.cpp
+    encryption/dnaencryptor.cpp \
+    encryption/yoonencryptor.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     encryption/evolutionencryptor.h \
     encryption/dnasequence.h \
     encryption/dna.h \
-    encryption/dnaencryptor.h
+    encryption/dnaencryptor.h \
+    encryption/yoonencryptor.h
 
 FORMS    += mainwindow.ui
 
