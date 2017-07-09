@@ -216,7 +216,7 @@ QImage DNAEncryptor::encrypt(QImage src)
     DNASequence* dnaHash = new DNASequence(hash, encoding);
     QVector<DNASequence*> dnaImage = image2dna(src);
     fpermutation(dnaImage, map);
-//    diffusion(dnaImage, dnaHash);
+    diffusion(dnaImage, dnaHash);
     QImage result = dna2image(dnaImage, src.height(), src.width());
     for(int i = 0; i < dnaImage.size(); i++)
         delete dnaImage[i];
@@ -229,7 +229,7 @@ QImage DNAEncryptor::decrypt(QImage src)
     modifyInit();
     DNASequence* dnaHash = new DNASequence(hash, encoding);
     QVector<DNASequence*> dnaImage = image2dna(src);
-//    diffusion(dnaImage, dnaHash);
+    diffusion(dnaImage, dnaHash);
     ipermutation(dnaImage, map);
     QImage result = dna2image(dnaImage, src.height(), src.width());
     for(int i = 0; i < dnaImage.size(); i++)
@@ -249,5 +249,11 @@ void DNAEncryptor::setRandomParameters()
 
 QString DNAEncryptor::parametersToString()
 {
-    return QString("");
+    QString result;
+    result += QString::number(x).append(';');
+    result += QString::number(y).append(';');
+    result += QString::number(z).append(';');
+    result += QString::number(encoding).append(';');
+    result += QString::fromLocal8Bit(hash).append(';');
+    return result;
 }
