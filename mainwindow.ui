@@ -598,7 +598,6 @@
      <addaction name="actionHistogram"/>
      <addaction name="menuCorrelation"/>
      <addaction name="actionEnthropy"/>
-     <addaction name="actionTest_RNG"/>
     </widget>
     <widget class="QMenu" name="menuDifferential_Analisys">
      <property name="title">
@@ -717,14 +716,6 @@
    </property>
    <property name="toolTip">
     <string>Full Analysis</string>
-   </property>
-  </action>
-  <action name="actionTest_RNG">
-   <property name="text">
-    <string>Create RNG data</string>
-   </property>
-   <property name="toolTip">
-    <string>for sts RNG test</string>
    </property>
   </action>
   <action name="actionEncryption_time">

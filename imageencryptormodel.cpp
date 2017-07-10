@@ -145,18 +145,46 @@ bool ImageEncryptorModel::getYoonEncryptorParameters(double &init, double &param
     K = yoonEncryptor->getK();
 }
 
-QVector<QVector<int> > ImageEncryptorModel::getSourceHistogram()
+QVector<QVector<int> > ImageEncryptorModel::getSrcHistogram()
 {
     if(!srcImage.isNull())
         return Analysis::histogram(srcImage);
     return QVector<QVector<int> >();
 }
 
-QVector<QVector<int> > ImageEncryptorModel::getDestHistogram()
+QVector<QVector<int> > ImageEncryptorModel::getDstHistogram()
 {
     if(!dstImage.isNull())
         return Analysis::histogram(dstImage);
     return QVector<QVector<int> >();
+}
+
+QVector<QVector<QVector<double> > > ImageEncryptorModel::getSrcCorrelationData(int type)
+{
+    if(srcImage.isNull())
+        return QVector<QVector<QVector<double> > >();
+    return Analysis::getCorrelationData(srcImage, (Analysis::CorrelationType)type);
+}
+
+QVector<QVector<QVector<double> > > ImageEncryptorModel::getDstCorrelationData(int type)
+{
+    if(dstImage.isNull())
+        return QVector<QVector<QVector<double> > >();
+    return Analysis::getCorrelationData(dstImage, (Analysis::CorrelationType)type);
+}
+
+QVector<double> ImageEncryptorModel::getSrcCorrelation(int type)
+{
+    if(srcImage.isNull())
+        return QVector<double>();
+    return Analysis::correlation(srcImage, (Analysis::CorrelationType)type);
+}
+
+QVector<double> ImageEncryptorModel::getDstCorrelation(int type)
+{
+    if(dstImage.isNull())
+        return QVector<double>();
+    return Analysis::correlation(dstImage, (Analysis::CorrelationType)type);
 }
 
 ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)

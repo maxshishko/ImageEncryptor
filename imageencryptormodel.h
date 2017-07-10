@@ -53,8 +53,12 @@ public:
     void setYoonEncryptorParameters(double init, double param, double K);
     bool getYoonEncryptorParameters(double &init, double &param, int &K);
 
-    QVector<QVector<int> > getSourceHistogram();
-    QVector<QVector<int> > getDestHistogram();
+    QVector<QVector<int> > getSrcHistogram();
+    QVector<QVector<int> > getDstHistogram();
+    QVector<QVector<QVector<double> > > getSrcCorrelationData(int type);
+    QVector<QVector<QVector<double> > > getDstCorrelationData(int type);
+    QVector<double> getSrcCorrelation(int type);
+    QVector<double> getDstCorrelation(int type);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

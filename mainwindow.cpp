@@ -60,6 +60,34 @@ void MainWindow::updateDNAEncryptionParameters()
     ui->lineEditDNAhash->setText(hash);
 }
 
+void MainWindow::showCorrelation(int type)
+{
+    QVector<double> correlation;
+    QVector<QVector<QVector<double> > > dataSet;
+    if(ui->tabWidgetImage->currentIndex() == 0){
+        correlation = model->getSrcCorrelation(type);
+        dataSet = model->getSrcCorrelationData(type);
+    } else{
+        correlation = model->getDstCorrelation(type);
+        dataSet = model->getDstCorrelationData(type);
+    }
+    if(correlation.isEmpty() || dataSet.isEmpty()){
+        QMessageBox::critical(this, QString("Error!") ,QString("Image is empty."));
+        return;
+    }
+
+    CorrelationWindow *cwindow = new CorrelationWindow(this, dataSet, correlation);
+    QString title;
+    if(type == 0)
+        title = QString("Horizontal ");
+    else if(type == 1)
+        title = QString("Vertical ");
+    else if(type == 2)
+        title = QString("Diagonal ");
+    cwindow->setWindowTitle(title.append("Correlation"));
+    cwindow->show();
+}
+
 void MainWindow::updateParameters()
 {
     try{
@@ -249,9 +277,9 @@ void MainWindow::on_actionHistogram_triggered()
 {
     QVector<QVector<int> > histogram;
     if(ui->tabWidgetImage->currentIndex()==0)
-        histogram = model->getSourceHistogram();
+        histogram = model->getSrcHistogram();
     else
-        histogram = model->getDestHistogram();
+        histogram = model->getDstHistogram();
 
     if(histogram.isEmpty())
         QMessageBox::critical(this, QString("Error!"),QString("Image is empty."));
@@ -259,4 +287,19 @@ void MainWindow::on_actionHistogram_triggered()
         HistogramWindow *histWindow = new HistogramWindow(this, histogram);
         histWindow->show();
     }
+}
+
+void MainWindow::on_actionHorizontal_triggered()
+{
+    showCorrelation(0);
+}
+
+void MainWindow::on_actionVertical_triggered()
+{
+    showCorrelation(1);
+}
+
+void MainWindow::on_actionDiagonal_triggered()
+{
+    showCorrelation(2);
 }

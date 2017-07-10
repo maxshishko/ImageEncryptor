@@ -9,6 +9,7 @@
 #include "imageencryptormodel.h"
 #include "imageencryptorpresenter.h"
 #include "histogramwindow.h"
+#include "correlationwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -47,6 +48,12 @@ private slots:
 
     void on_actionHistogram_triggered();
 
+    void on_actionHorizontal_triggered();
+
+    void on_actionVertical_triggered();
+
+    void on_actionDiagonal_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -61,6 +68,7 @@ private:
     void updateEvolutionEncryptionParameters();
     void updateYoonEncryptionParameters();
     void updateDNAEncryptionParameters();
+    void showCorrelation(int type);
 };
 
 #endif // MAINWINDOW_H

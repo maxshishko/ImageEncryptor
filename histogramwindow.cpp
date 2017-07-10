@@ -57,9 +57,9 @@ void HistogramWindow::exportAsImage()
 
 bool HistogramWindow::saveImage(QString filename)
 {
-    QImage redPlotImage(plotRed->size(), QImage::Format_RGBA8888);
-    QImage greenPlotImage(plotGreen->size(), QImage::Format_RGBA8888);
-    QImage bluePlotImage(plotBlue->size(), QImage::Format_RGBA8888);
+    QImage redPlotImage(2*plotRed->size(), QImage::Format_RGBA8888);
+    QImage greenPlotImage(2*plotGreen->size(), QImage::Format_RGBA8888);
+    QImage bluePlotImage(2*plotBlue->size(), QImage::Format_RGBA8888);
     QwtPlotRenderer renderer;
     renderer.renderTo(plotRed, redPlotImage);
     renderer.renderTo(plotGreen, greenPlotImage);
