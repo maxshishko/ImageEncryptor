@@ -19,21 +19,17 @@ double Analysis::mean(QVector<double> sequence)
     return sum / sequence.size();
 }
 
-QVector<double> Analysis::calcCorrelation(QVector<QVector<double> > samplesX, QVector<QVector<double> > samplesY)
+double Analysis::calcCorrelation(QVector<double> samplesX, QVector<double> samplesY)
 {
-    QVector<double> result;
-    for(int c = 0; c < 3; c++){
-        double r = 0, divX = 0, divY = 0, meanX = 0, meanY = 0;
-        meanX = mean(samplesX[c]);
-        meanY = mean(samplesY[c]);
-        for(int i = 0; i < samplesX.size(); i++){
-            r += (samplesX[c][i]-meanX)*(samplesY[c][i]-meanY);
-            divX += (samplesX[c][i]-meanX)*(samplesX[c][i]-meanX);
-            divY += (samplesY[c][i]-meanY)*(samplesY[c][i]-meanY);
-        }
-        result.push_back(r/sqrt(divX*divY));
+    double r = 0, divX = 0, divY = 0, meanX = 0, meanY = 0;
+    meanX = mean(samplesX);
+    meanY = mean(samplesY);
+    for(int i = 0; i < samplesX.size(); i++){
+        r += (samplesX[i]-meanX)*(samplesY[i]-meanY);
+        divX += (samplesX[i]-meanX)*(samplesX[i]-meanX);
+        divY += (samplesY[i]-meanY)*(samplesY[i]-meanY);
     }
-    return result;
+    return r/sqrt(divX*divY);
 }
 
 void Analysis::writeVector(QTextStream *stream, QVector<double> vector)
@@ -60,24 +56,34 @@ QVector<QVector<int> > Analysis::histogram(QImage image)
 
 QVector<double> Analysis::correlation(QImage image, Analysis::CorrelationType type, int pixelSetSize)
 {
+
+    QVector<QVector<QVector<double> > > dataSet = getCorrelationData(image, type, pixelSetSize);
+    QVector<double> result;
+    result.push_back(calcCorrelation(dataSet[0][0], dataSet[0][1]));
+    result.push_back(calcCorrelation(dataSet[1][0], dataSet[1][1]));
+    result.push_back(calcCorrelation(dataSet[2][0], dataSet[2][1]));
+
+    return result;
+}
+
+QVector<QVector<QVector<double> > > Analysis::getCorrelationData(QImage image, Analysis::CorrelationType type, int pixelSetSize)
+{
     int dx = corrMask[type][0], dy = corrMask[type][1];
 
     if(pixelSetSize>image.width()*image.height())
         pixelSetSize = image.width()*image.height()/2;
 
     QVector<QPoint> pixelSet = getRandomPixelset(image.width()-dx, image.height()-dy, pixelSetSize);
-    QVector<QVector<double> > samplesX(3, QVector<double>());
-    QVector<QVector<double> > samplesY(3, QVector<double>());
+    QVector<QVector<QVector<double> > > dataSet(3, QVector<QVector<double> >(2, QVector<double>()));
     foreach (QPoint point, pixelSet) {
-        samplesX[0].push_back(image.pixelColor(point).red());
-        samplesY[0].push_back(image.pixelColor(point+QPoint(dx, dy)).red());
-        samplesX[1].push_back(image.pixelColor(point).green());
-        samplesY[1].push_back(image.pixelColor(point+QPoint(dx, dy)).green());
-        samplesX[2].push_back(image.pixelColor(point).blue());
-        samplesY[2].push_back(image.pixelColor(point+QPoint(dx, dy)).blue());
+        dataSet[0][0].push_back(image.pixelColor(point).redF());
+        dataSet[0][1].push_back(image.pixelColor(point+QPoint(dx, dy)).redF());
+        dataSet[1][0].push_back(image.pixelColor(point).greenF());
+        dataSet[1][1].push_back(image.pixelColor(point+QPoint(dx, dy)).greenF());
+        dataSet[2][0].push_back(image.pixelColor(point).blueF());
+        dataSet[2][1].push_back(image.pixelColor(point+QPoint(dx, dy)).blueF());
     }
-
-    return calcCorrelation(samplesX, samplesY);
+    return dataSet;
 }
 
 QVector<double> Analysis::entropy(QImage image)

@@ -15,13 +15,14 @@ class Analysis
                                  {1, 1}};
     static QVector<QPoint> getRandomPixelset(int sizex, int sizey, int setSize);
     static double mean(QVector<double> sequence);
-    static QVector<double> calcCorrelation(QVector<QVector<double> > samplesX, QVector<QVector<double> > samplesY);
+    static double calcCorrelation(QVector<double> samplesX, QVector<double> samplesY);
     static void writeVector(QTextStream *stream, QVector<double> vector);
 public:
     enum CorrelationType{CORR_H, CORR_V, CORR_D};
 
     static QVector<QVector<int> > histogram(QImage image);
     static QVector<double> correlation(QImage image, CorrelationType type, int pixelSetSize = 2000);
+    static QVector<QVector<QVector<double> > > getCorrelationData(QImage image, CorrelationType type, int pixelSetSize = 2000);
     static QVector<double> entropy(QImage image);
     static QVector<double> NPCR(ImageEncryptor *encryptor, QImage image);
     static QVector<double> UACI(ImageEncryptor *encryptor, QImage image);
