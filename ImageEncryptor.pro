@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     encryption/dna.cpp \
     encryption/dnaencryptor.cpp \
     encryption/yoonencryptor.cpp \
-    analysis.cpp
+    analysis.cpp \
+    histogramwindow.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
@@ -43,9 +44,11 @@ HEADERS  += mainwindow.h \
     encryption/dna.h \
     encryption/dnaencryptor.h \
     encryption/yoonencryptor.h \
-    analysis.h
+    analysis.h \
+    histogramwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    histogramwindow.ui
 
 RESOURCES += \
     resources.qrc
@@ -54,3 +57,10 @@ unix|win32: LIBS += -L$$PWD/../build-ChaoticMaps-Desktop_Qt_5_9_1_MinGW_32bit-Re
 
 INCLUDEPATH += $$PWD/../ChaoticMaps
 DEPENDPATH += $$PWD/../ChaoticMaps
+
+win32:CONFIG(release, debug|release): LIBS += -LC:/qwt-6.1.3/lib/ -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:/qwt-6.1.3/lib/ -lqwtd
+else:unix: LIBS += -LC:/qwt-6.1.3/lib/ -lqwt
+
+INCLUDEPATH += C:/qwt-6.1.3/include
+DEPENDPATH += C:/qwt-6.1.3/include

@@ -244,3 +244,19 @@ void MainWindow::on_actionDecrypt_triggered()
 {
     decrypt();
 }
+
+void MainWindow::on_actionHistogram_triggered()
+{
+    QVector<QVector<int> > histogram;
+    if(ui->tabWidgetImage->currentIndex()==0)
+        histogram = model->getSourceHistogram();
+    else
+        histogram = model->getDestHistogram();
+
+    if(histogram.isEmpty())
+        QMessageBox::critical(this, QString("Error!"),QString("Image is empty."));
+    else{
+        HistogramWindow *histWindow = new HistogramWindow(this, histogram);
+        histWindow->show();
+    }
+}

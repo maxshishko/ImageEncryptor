@@ -9,6 +9,7 @@
 #include "encryption/dnaencryptor.h"
 #include "encryption/yoonencryptor.h"
 #include "maps.h"
+#include "analysis.h"
 
 class ImageEncryptorModel
 {
@@ -51,6 +52,9 @@ public:
 
     void setYoonEncryptorParameters(double init, double param, double K);
     bool getYoonEncryptorParameters(double &init, double &param, int &K);
+
+    QVector<QVector<int> > getSourceHistogram();
+    QVector<QVector<int> > getDestHistogram();
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

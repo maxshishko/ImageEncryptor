@@ -145,6 +145,20 @@ bool ImageEncryptorModel::getYoonEncryptorParameters(double &init, double &param
     K = yoonEncryptor->getK();
 }
 
+QVector<QVector<int> > ImageEncryptorModel::getSourceHistogram()
+{
+    if(!srcImage.isNull())
+        return Analysis::histogram(srcImage);
+    return QVector<QVector<int> >();
+}
+
+QVector<QVector<int> > ImageEncryptorModel::getDestHistogram()
+{
+    if(!dstImage.isNull())
+        return Analysis::histogram(dstImage);
+    return QVector<QVector<int> >();
+}
+
 ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)
 {
     switch (map) {

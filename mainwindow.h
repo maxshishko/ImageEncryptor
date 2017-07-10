@@ -8,6 +8,7 @@
 
 #include "imageencryptormodel.h"
 #include "imageencryptorpresenter.h"
+#include "histogramwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,8 @@ private slots:
     void on_buttonDecrypt_clicked();
 
     void on_actionDecrypt_triggered();
+
+    void on_actionHistogram_triggered();
 
 private:
     Ui::MainWindow *ui;
