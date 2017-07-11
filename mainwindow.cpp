@@ -303,3 +303,52 @@ void MainWindow::on_actionDiagonal_triggered()
 {
     showCorrelation(2);
 }
+
+void MainWindow::on_actionEnthropy_triggered()
+{
+    QVector<double> entropy;
+    if(ui->tabWidgetImage->currentIndex() == 0)
+        entropy = model->getSrcEntropy();
+    else if(ui->tabWidgetImage->currentIndex() == 0)
+        entropy = model->getDstEntropy();
+    if(!entropy.isEmpty()){
+        AnalysisResultWindow *arwindow = new AnalysisResultWindow(this, entropy);
+        arwindow->setWindowTitle(QString("Entropy"));
+        arwindow->show();
+    }
+    else
+        QMessageBox::critical(this, QString("Error!"), QString("Image is empty"));
+}
+
+void MainWindow::on_actionNPCR_triggered()
+{
+    QVector<double> npcr = model->getNPCR();
+    if(!npcr.isEmpty()){
+        AnalysisResultWindow *arwindow = new AnalysisResultWindow(this, npcr);
+        arwindow->setWindowTitle(QString("NPCR"));
+        arwindow->show();
+    }
+    else
+        QMessageBox::critical(this, QString("Error!"), QString("Image is empty"));
+}
+
+void MainWindow::on_actionUACI_triggered()
+{
+    QVector<double> uaci = model->getUACI();
+    if(!uaci.isEmpty()){
+        AnalysisResultWindow *arwindow = new AnalysisResultWindow(this, uaci);
+        arwindow->setWindowTitle(QString("UACI"));
+        arwindow->show();
+    }
+    else
+        QMessageBox::critical(this, QString("Error!"), QString("Image is empty"));
+}
+
+void MainWindow::on_actionEncryption_time_triggered()
+{
+    double encTime = model->getEncryptionTime();
+    if(encTime<0)
+        QMessageBox::critical(this, QString("Error!"), QString("Image is empty"));
+    else
+        QMessageBox::information(this, QString("Encryption time"), QString::number(encTime));
+}

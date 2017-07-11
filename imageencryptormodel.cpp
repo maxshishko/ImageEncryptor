@@ -187,6 +187,45 @@ QVector<double> ImageEncryptorModel::getDstCorrelation(int type)
     return Analysis::correlation(dstImage, (Analysis::CorrelationType)type);
 }
 
+QVector<double> ImageEncryptorModel::getSrcEntropy()
+{
+    QVector<double> result;
+    if(!srcImage.isNull())
+        result =  Analysis::entropy(srcImage);
+    return result;
+}
+
+QVector<double> ImageEncryptorModel::getDstEntropy()
+{
+    QVector<double> result;
+    if(!srcImage.isNull())
+        result = Analysis::entropy(srcImage);
+    return result;
+}
+
+QVector<double> ImageEncryptorModel::getNPCR()
+{
+    QVector<double> result;
+    if(!srcImage.isNull())
+        result = Analysis::NPCR(encryptor, srcImage);
+    return result;
+}
+
+QVector<double> ImageEncryptorModel::getUACI()
+{
+    QVector<double> result;
+    if(!srcImage.isNull())
+        result = Analysis::UACI(encryptor, srcImage);
+    return result;
+}
+
+double ImageEncryptorModel::getEncryptionTime()
+{
+    if(srcImage.isNull())
+        return -1;
+    return Analysis::encryptionTime(encryptor, srcImage);
+}
+
 ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)
 {
     switch (map) {

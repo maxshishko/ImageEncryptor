@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     encryption/yoonencryptor.cpp \
     analysis.cpp \
     histogramwindow.cpp \
-    correlationwindow.cpp
+    correlationwindow.cpp \
+    analysisresultwindow.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
@@ -47,11 +48,13 @@ HEADERS  += mainwindow.h \
     encryption/yoonencryptor.h \
     analysis.h \
     histogramwindow.h \
-    correlationwindow.h
+    correlationwindow.h \
+    analysisresultwindow.h
 
 FORMS    += mainwindow.ui \
     histogramwindow.ui \
-    correlationwindow.ui
+    correlationwindow.ui \
+    analysisresultwindow.ui
 
 RESOURCES += \
     resources.qrc

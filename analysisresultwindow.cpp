@@ -8,9 +8,9 @@ AnalysisResultWindow::AnalysisResultWindow(QWidget *parent, QVector<double> data
     ui->setupUi(this);
 
     if(data.size() == 3){
-        ui->lineEdit_1->setText(data[0]);
-        ui->lineEdit_2->setText(data[1]);
-        ui->lineEdit_3->setText(data[2]);
+        ui->lineEdit_1->setText(QString::number(data[0]));
+        ui->lineEdit_2->setText(QString::number(data[1]));
+        ui->lineEdit_3->setText(QString::number(data[2]));
     }
 }
 

@@ -137,9 +137,9 @@ QVector<double> Analysis::NPCR(ImageEncryptor *encryptor, QImage image)
                 result[2]++;
         }
     }
-    result[0] /= image.width()*image.height()/100;
-    result[1] /= image.width()*image.height()/100;
-    result[2] /= image.width()*image.height()/100;
+    result[0] /= image.width()*image.height(); result[0] *= 100.;
+    result[1] /= image.width()*image.height(); result[1] *= 100.;
+    result[2] /= image.width()*image.height(); result[2] *= 100.;
     return result;
 }
 

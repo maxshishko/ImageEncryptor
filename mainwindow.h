@@ -10,6 +10,7 @@
 #include "imageencryptorpresenter.h"
 #include "histogramwindow.h"
 #include "correlationwindow.h"
+#include "analysisresultwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -53,6 +54,14 @@ private slots:
     void on_actionVertical_triggered();
 
     void on_actionDiagonal_triggered();
+
+    void on_actionEnthropy_triggered();
+
+    void on_actionNPCR_triggered();
+
+    void on_actionUACI_triggered();
+
+    void on_actionEncryption_time_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -59,6 +59,11 @@ public:
     QVector<QVector<QVector<double> > > getDstCorrelationData(int type);
     QVector<double> getSrcCorrelation(int type);
     QVector<double> getDstCorrelation(int type);
+    QVector<double> getSrcEntropy();
+    QVector<double> getDstEntropy();
+    QVector<double> getNPCR();
+    QVector<double> getUACI();
+    double getEncryptionTime();
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

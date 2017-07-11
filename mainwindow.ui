@@ -603,13 +603,13 @@
      <property name="title">
       <string>Differential Analisys</string>
      </property>
-     <addaction name="actionNPCR_2"/>
-     <addaction name="actionUACI_2"/>
+     <addaction name="actionNPCR"/>
+     <addaction name="actionUACI"/>
     </widget>
     <addaction name="menuStatistical_Analisys"/>
     <addaction name="menuDifferential_Analisys"/>
-    <addaction name="actionFull_Analysis"/>
     <addaction name="actionEncryption_time"/>
+    <addaction name="actionFull_Analysis"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -700,12 +700,12 @@
     <string>Diagonal</string>
    </property>
   </action>
-  <action name="actionNPCR_2">
+  <action name="actionNPCR">
    <property name="text">
     <string>NPCR</string>
    </property>
   </action>
-  <action name="actionUACI_2">
+  <action name="actionUACI">
    <property name="text">
     <string>UACI</string>
    </property>
