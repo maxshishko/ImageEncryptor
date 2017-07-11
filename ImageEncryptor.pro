@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     analysis.cpp \
     histogramwindow.cpp \
     correlationwindow.cpp \
-    analysisresultwindow.cpp
+    analysisresultwindow.cpp \
+    fullanalisysdialog.cpp
 
 HEADERS  += mainwindow.h \
     imageencryptormodel.h \
@@ -49,12 +50,14 @@ HEADERS  += mainwindow.h \
     analysis.h \
     histogramwindow.h \
     correlationwindow.h \
-    analysisresultwindow.h
+    analysisresultwindow.h \
+    fullanalisysdialog.h
 
 FORMS    += mainwindow.ui \
     histogramwindow.ui \
     correlationwindow.ui \
-    analysisresultwindow.ui
+    analysisresultwindow.ui \
+    fullanalisysdialog.ui
 
 RESOURCES += \
     resources.qrc

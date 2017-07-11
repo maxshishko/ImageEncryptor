@@ -5,12 +5,14 @@
 #include <QFileDialog>
 #include <QImageReader>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include "imageencryptormodel.h"
 #include "imageencryptorpresenter.h"
 #include "histogramwindow.h"
 #include "correlationwindow.h"
 #include "analysisresultwindow.h"
+#include "fullanalisysdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -62,6 +64,8 @@ private slots:
     void on_actionUACI_triggered();
 
     void on_actionEncryption_time_triggered();
+
+    void on_actionFull_Analysis_triggered();
 
 private:
     Ui::MainWindow *ui;

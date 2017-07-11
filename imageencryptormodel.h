@@ -64,6 +64,7 @@ public:
     QVector<double> getNPCR();
     QVector<double> getUACI();
     double getEncryptionTime();
+    bool fullAnalysis(QString filename, bool useRandomParams = false,  int numSimulations = 1);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

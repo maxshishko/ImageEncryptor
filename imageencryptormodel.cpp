@@ -226,6 +226,13 @@ double ImageEncryptorModel::getEncryptionTime()
     return Analysis::encryptionTime(encryptor, srcImage);
 }
 
+bool ImageEncryptorModel::fullAnalysis(QString filename, bool useRandomParams, int numSimulations)
+{
+    if(srcImage.isNull())
+        return false;
+    return Analysis::fullAnalysis(encryptor, srcImage, filename,useRandomParams, numSimulations);
+}
+
 ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)
 {
     switch (map) {

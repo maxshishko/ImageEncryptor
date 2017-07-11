@@ -254,6 +254,6 @@ QString DNAEncryptor::parametersToString()
     result += QString::number(y).append(';');
     result += QString::number(z).append(';');
     result += QString::number(encoding).append(';');
-    result += QString::fromLocal8Bit(hash).append(';');
+    result += QString::fromLocal8Bit(hash.toHex()).append(';');
     return result;
 }

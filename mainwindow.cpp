@@ -322,6 +322,8 @@ void MainWindow::on_actionEnthropy_triggered()
 
 void MainWindow::on_actionNPCR_triggered()
 {
+    setupEncryptor();
+    setupEncryptionParameters();
     QVector<double> npcr = model->getNPCR();
     if(!npcr.isEmpty()){
         AnalysisResultWindow *arwindow = new AnalysisResultWindow(this, npcr);
@@ -334,6 +336,8 @@ void MainWindow::on_actionNPCR_triggered()
 
 void MainWindow::on_actionUACI_triggered()
 {
+    setupEncryptor();
+    setupEncryptionParameters();
     QVector<double> uaci = model->getUACI();
     if(!uaci.isEmpty()){
         AnalysisResultWindow *arwindow = new AnalysisResultWindow(this, uaci);
@@ -346,9 +350,26 @@ void MainWindow::on_actionUACI_triggered()
 
 void MainWindow::on_actionEncryption_time_triggered()
 {
+    setupEncryptor();
+    setupEncryptionParameters();
     double encTime = model->getEncryptionTime();
     if(encTime<0)
         QMessageBox::critical(this, QString("Error!"), QString("Image is empty"));
     else
         QMessageBox::information(this, QString("Encryption time"), QString::number(encTime));
+}
+
+void MainWindow::on_actionFull_Analysis_triggered()
+{
+    setupEncryptor();
+    setupEncryptionParameters();
+    FullAnalisysDialog dialog(this);
+    if(dialog.exec() == QDialog::Accepted){
+        if(!model->fullAnalysis(dialog.getFilePath(),
+                            dialog.useRandomParameters(),
+                            dialog.getNumSimulations()))
+            QMessageBox::critical(this, QString("Error!"), QString("Can't create file"));
+        else
+            QMessageBox::information(this, QString(""), QString("Done!"));
+    }
 }

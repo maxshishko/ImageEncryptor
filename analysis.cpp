@@ -176,7 +176,7 @@ double Analysis::encryptionTime(ImageEncryptor *encryptor, QImage image)
     return static_cast<double>(clock()-begin)/1000.;
 }
 
-void Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString filename, int numSimulations)
+bool Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString filename, bool useRandomParams, int numSimulations)
 {
     QFile file(filename);
     if(file.open(QIODevice::WriteOnly)){
@@ -184,8 +184,10 @@ void Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString fil
 
         for(int i = 0; i < numSimulations; i++){
             stream << image.text().append(';');
-            stream << encryptor->parametersToString();
+            if(useRandomParams)
+                encryptor->setRandomParameters();
             QImage encImage = encryptor->encrypt(image);
+            stream << encryptor->parametersToString();
             writeVector(&stream, correlation(encImage, CorrelationType::CORR_H));
             writeVector(&stream, correlation(encImage, CorrelationType::CORR_V));
             writeVector(&stream, correlation(encImage, CorrelationType::CORR_D));
@@ -195,5 +197,7 @@ void Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString fil
             stream << encryptionTime(encryptor, image) << "\n";
         }
         file.close();
+        return true;
     }
+    return false;
 }

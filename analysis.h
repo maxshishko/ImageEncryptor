@@ -27,7 +27,7 @@ public:
     static QVector<double> NPCR(ImageEncryptor *encryptor, QImage image);
     static QVector<double> UACI(ImageEncryptor *encryptor, QImage image);
     static double encryptionTime(ImageEncryptor *encryptor, QImage image);
-    static void fullAnalysis(ImageEncryptor *encryptor, QImage image, QString filename, int numSimulations = 1);
+    static bool fullAnalysis(ImageEncryptor *encryptor, QImage image, QString filename, bool useRandomParams = false, int numSimulations = 1);
 };
 
 #endif // ENCRYPTIONANALYZER_H
