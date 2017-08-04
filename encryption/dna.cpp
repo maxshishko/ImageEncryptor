@@ -40,11 +40,6 @@ const DNA DNA::operator^(const DNA &r) const
     return result;
 }
 
-DNA::DNA()
-{
-
-}
-
 DNA::DNA(DNA::Nucleotide value):value(value)
 {
 

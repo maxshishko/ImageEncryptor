@@ -18,8 +18,8 @@ private:
 
 public:
     DNA();
-    DNA(Nucleotide value);
-    DNA(int value, int encoding = 0);
+    explicit DNA(Nucleotide value);
+    explicit DNA(int value, int encoding = 0);
 
     Nucleotide getValue() const;
     int getValue(int encoding) const;
