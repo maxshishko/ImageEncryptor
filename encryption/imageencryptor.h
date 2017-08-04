@@ -6,10 +6,8 @@
 class ImageEncryptor
 {
 public:
-    ImageEncryptor();
-
-    virtual QImage encrypt(QImage src) = 0;
-    virtual QImage decrypt(QImage src) = 0;
+    virtual QImage encrypt(const QImage &src) = 0;
+    virtual QImage decrypt(const QImage &src) = 0;
     virtual void setRandomParameters() = 0;
     virtual QString parametersToString() = 0;
 };
