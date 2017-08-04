@@ -1,4 +1,5 @@
 #include "dnasequence.h"
+#include <memory>
 
 QVector<DNA> DNASequence::getSequence() const
 {
@@ -19,9 +20,16 @@ DNASequence::DNASequence(QByteArray ba, int encoding)
     }
 }
 
-DNASequence::DNASequence(const DNASequence &seq)
+DNASequence::DNASequence(const DNASequence &seq):
+    sequence(seq.sequence)
 {
-    this->sequence = seq.sequence;
+
+}
+
+DNASequence::DNASequence(DNASequence &&seq):
+    sequence(std::move(seq.sequence))
+{
+
 }
 
 DNASequence::DNASequence(int size)

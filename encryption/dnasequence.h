@@ -18,7 +18,8 @@ public:
     DNASequence();
     DNASequence(QByteArray ba, int encoding);
     DNASequence(const DNASequence &seq);
-    DNASequence(int size);
+    DNASequence(DNASequence &&seq);
+    explicit DNASequence(int size);
 
     void push_back(DNA el);
     void push_back(uchar byte, int encoding);
