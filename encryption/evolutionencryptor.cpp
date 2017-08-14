@@ -1,6 +1,7 @@
 #include "evolutionencryptor.h"
 
 #include <iostream>
+#include <algorithm>
 
 int EvolutionEncryptor::getPopulationSize() const
 {
@@ -56,17 +57,12 @@ void EvolutionEncryptor::setDecryptionKey(const QString &value)
     decryptionKey = value;
 }
 
-ChaoticMap1D *EvolutionEncryptor::getMap() const
+void EvolutionEncryptor::setMap(ChaoticMap1DUptr &&value)
 {
-    return map;
+    map = std::move(value);
 }
 
-void EvolutionEncryptor::setMap(ChaoticMap1D *value)
-{
-    map = value;
-}
-
-QByteArray EvolutionEncryptor::calculateHash(QImage image)
+QByteArray EvolutionEncryptor::calculateHash(const QImage &image)
 {
     QByteArray ba;
     QBuffer buffer(&ba);
@@ -76,7 +72,7 @@ QByteArray EvolutionEncryptor::calculateHash(QImage image)
     return QCryptographicHash::hash(ba, QCryptographicHash::Sha256);
 }
 
-double EvolutionEncryptor::getMapInit(QByteArray hash)
+double EvolutionEncryptor::getMapInit(const QByteArray &hash)
 {
     double init = 0;
     char ch = hash[0];
@@ -96,56 +92,55 @@ double EvolutionEncryptor::getMapInit(QByteArray hash)
     return init;
 }
 
-QVector<DNASequence*> EvolutionEncryptor::getInitialPopulation(int length)
+QVector<DNASequence> EvolutionEncryptor::getInitialPopulation(int length)
 {
-    QVector<DNASequence*> population;
+    QVector<DNASequence> population;
     for(int i = 0; i < populationSize; ++i){
-        QVector<double> *chaoticSequence = getChaoticSequence(length);
+        auto chaoticSequence = getChaoticSequence(length);
         population.push_back(getDnaMask(chaoticSequence));
-        delete chaoticSequence;
     }
     return population;
 }
 
-QVector<double> *EvolutionEncryptor::getChaoticSequence(int length, int index)
+QVector<double> EvolutionEncryptor::getChaoticSequence(int length, int index)
 {
-    QVector<double> *seq = new QVector<double>;
+    QVector<double> seq;
     QVector<double> key;
     key.push_back(map->getX());
 
     for(int i = 0; i < length/2; ++i)
-        seq->push_back(map->next());
+        seq.push_back(map->next());
     key.push_back(map->getX());
     if(index < 0)
         keys.push_back(key);
     else
         keys[index].swap(key);
     for(int i = length/2; i < length; ++i)
-        seq->push_back(map->next());
+        seq.push_back(map->next());
     return seq;
 }
 
-QVector<double> *EvolutionEncryptor::getChaoticSequence(int length, double keyL, double keyH)
+QVector<double> EvolutionEncryptor::getChaoticSequence(int length, double keyL, double keyH)
 {
     map->setX(keyL);
-    QVector<double> *seq = new QVector<double>;
+    QVector<double> seq;
     for(int i = 0; i < length/2; i++)
-        seq->push_back(map->next());
+        seq.push_back(map->next());
     map->setX(keyH);
     for(int i = length/2; i< length; i++)
-        seq->push_back(map->next());
+        seq.push_back(map->next());
     return seq;
 }
 
-DNASequence *EvolutionEncryptor::getDnaMask(QVector<double> *chaoticSequence)
+DNASequence EvolutionEncryptor::getDnaMask(const QVector<double> &chaoticSequence)
 {
-    DNASequence *dnaSeq = new DNASequence;
+    DNASequence result;
 
-    foreach (double chaoticVal, *chaoticSequence) {
+    for (auto chaoticVal: chaoticSequence) {
         uchar val = static_cast<uchar>(floor(chaoticVal*256));
-        dnaSeq->push_back(val, encoding);
+        result.push_back(val, encoding);
     }
-    return dnaSeq;
+    return result;
 }
 
 int EvolutionEncryptor::getRule(double val)
@@ -153,38 +148,33 @@ int EvolutionEncryptor::getRule(double val)
     return floor(val*8);
 }
 
-DNASequence *EvolutionEncryptor::image2dna(QImage image, int encoding)
+DNASequence EvolutionEncryptor::image2dna(const QImage &image, int encoding)
 {
-    QByteArray *ba = new QByteArray;
-    QBuffer *buffer = new QBuffer(ba);
-    buffer->open(QIODevice::WriteOnly);
-    image.save(buffer, "BMP");
-    buffer->close();
-    delete buffer;
-    imagePrefix = ba->mid(0, 54);
-    QByteArray *rawData = new QByteArray(ba->mid(54));
-    delete ba;
-    DNASequence *sequence = new DNASequence(*rawData, encoding);
-    return sequence;
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "BMP");
+    buffer.close();
+    imagePrefix = ba.mid(0, 54);
+    return DNASequence(ba.mid(54), encoding);
 }
 
-QImage EvolutionEncryptor::dna2image(DNASequence *seq, int encoding)
+QImage EvolutionEncryptor::dna2image(const DNASequence &seq, int encoding)
 {
     QByteArray ba = imagePrefix;
-    ba.append(seq->toByteArray(encoding));
+    ba.append(seq.toByteArray(encoding));
     return QImage::fromData(ba);
 }
 
-QVector<double> EvolutionEncryptor::calcEntropies(QVector<DNASequence*> population)
+QVector<double> EvolutionEncryptor::calcEntropies(const QVector<DNASequence> &population)
 {
     QVector<double> entropies;
-    foreach (DNASequence* member, population) {
+    for (auto member: population)
         entropies.push_back(calcEntropy(member));
-    }
     return entropies;
 }
 
-double EvolutionEncryptor::calcEntropy(DNASequence* member)
+double EvolutionEncryptor::calcEntropy(const DNASequence &member)
 {
     QVector<double> colors(256, 0);
 
@@ -192,8 +182,6 @@ double EvolutionEncryptor::calcEntropy(DNASequence* member)
 
     for(int i = 0; i < img.height(); i++){
         for(int j = 0; j < img.width(); j++){
-            QColor color = img.pixelColor(j,i);
-            int red = color.red();
             colors[img.pixelColor(j, i).red()]++;
             colors[img.pixelColor(j, i).green()]++;
             colors[img.pixelColor(j, i).blue()]++;
@@ -213,7 +201,7 @@ double EvolutionEncryptor::calcEntropy(DNASequence* member)
     return entropy;
 }
 
-QVector<double> EvolutionEncryptor::calcProbabilities(QVector<double> entropies)
+QVector<double> EvolutionEncryptor::calcProbabilities(const QVector<double> &entropies)
 {
     QVector<double> probabilities;
     double probabilitySum = 0;
@@ -226,9 +214,9 @@ QVector<double> EvolutionEncryptor::calcProbabilities(QVector<double> entropies)
     return probabilities;
 }
 
-QVector<QVector<int> > EvolutionEncryptor::getCrossoverPairs(QVector<double> probabilities)
+QVector<QVector<int>> EvolutionEncryptor::getCrossoverPairs(const QVector<double> &probabilities)
 {
-    QVector<QVector<int> > crossoverPairs;
+    QVector<QVector<int>> crossoverPairs;
     QSet<int> indices;
     for(int i = 0; i < probabilities.size(); i++)
         indices.insert(i);
@@ -245,18 +233,17 @@ QVector<QVector<int> > EvolutionEncryptor::getCrossoverPairs(QVector<double> pro
     return crossoverPairs;
 }
 
-int EvolutionEncryptor::doRouletteWheel(QSet<int> indices, QVector<double> probabilities)
+int EvolutionEncryptor::doRouletteWheel(const QSet<int> &indices, const QVector<double> &probabilities)
 {
     QVector<double> localProbabileties;
     double sum = 0;
-    for(QSet<int>::iterator it = indices.begin(); it != indices.end(); it++){
-         localProbabileties.push_back(probabilities[*it]);
-         sum += probabilities[*it];
+    for(auto index: indices){
+        localProbabileties.push_back(probabilities[index]);
+        sum += probabilities[index];
     }
-    for(int i = 0; i < localProbabileties.size(); i++)
-        localProbabileties[i] = localProbabileties[i]/sum;
+    std::for_each(localProbabileties.begin(), localProbabileties.end(), [sum](double &el){el/=sum;});
     double randomNumber = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
-    QSet<int>::iterator it = indices.begin();
+    auto it = indices.begin();
     sum = 0;
     for(int i = 0; i < localProbabileties.size(); i++, it++){
         sum += localProbabileties[i];
@@ -266,27 +253,24 @@ int EvolutionEncryptor::doRouletteWheel(QSet<int> indices, QVector<double> proba
     return *indices.end();
 }
 
-void EvolutionEncryptor::singlepointCrossover(DNASequence *first, DNASequence *second)
+void EvolutionEncryptor::singlepointCrossover(DNASequence &first, DNASequence &second)
 {
-    first->crossover(second, first->size()/2);
+    first.crossover(second, first.size()/2);
 }
 
-void EvolutionEncryptor::singleMutation(QVector<DNASequence *> &population, int index, DNASequence *image)
+void EvolutionEncryptor::singleMutation(QVector<DNASequence> &population, int index, const DNASequence &image)
 {
-    int size = population[index]->size();
-    delete population[index];
-    population[index] = new DNASequence((*image)^(*getDnaMask(getChaoticSequence(size/4, index))));
+    int size = population[index].size();
+    population[index] = std::move(image^getDnaMask(getChaoticSequence(size/4, index)));
 }
 
 void EvolutionEncryptor::swapKeys(int i, int j){
-    double tmp = keys[i][1];
-    keys[i][1] = keys[j][1];
-    keys[j][1] = tmp;
+    std::swap(keys[i][1], keys[j][1]);
 }
 
-QPair<double, int> EvolutionEncryptor::findMaxEntropy(QVector<DNASequence *> population)
+QPair<double, int> EvolutionEncryptor::findMaxEntropy(const QVector<DNASequence> &population)
 {
-    QVector<double> entropies = calcEntropies(population);
+    auto entropies = calcEntropies(population);
     QMultiMap<double, int> sortedEntropies;
     for(int i = 0; i < entropies.size(); i++)
         sortedEntropies.insert(entropies[i], i);
@@ -296,7 +280,7 @@ QPair<double, int> EvolutionEncryptor::findMaxEntropy(QVector<DNASequence *> pop
     return result;
 }
 
-void EvolutionEncryptor::doCrossover(QVector<DNASequence *> population)
+void EvolutionEncryptor::doCrossover(QVector<DNASequence> &population)
 {
     QVector<double> entropies = calcEntropies(population);
     QVector<double> probabilities = calcProbabilities(entropies);
@@ -307,25 +291,16 @@ void EvolutionEncryptor::doCrossover(QVector<DNASequence *> population)
     }
 }
 
-void EvolutionEncryptor::doMutation(QVector<DNASequence *> population, DNASequence *image)
+void EvolutionEncryptor::doMutation(QVector<DNASequence> &population, const DNASequence &image)
 {
-    QVector<double> entropies = calcEntropies(population);
+    auto entropies = calcEntropies(population);
     QMultiMap<double, int> sortedEntropies;
     for(int i = 0; i < entropies.size(); i++)
         sortedEntropies.insert(entropies[i], i);
 
-    int mutationsNumber = 0;
-    QMultiMap<double, int>::iterator it = sortedEntropies.begin();
-    while(mutationsNumber < static_cast<int>(populationSize*mutationRate)){
+    auto it = sortedEntropies.begin();
+    for(auto mutN = 0; mutN < static_cast<int>(populationSize*mutationRate); mutN++, it++)
         singleMutation(population, it.value(), image);
-        mutationsNumber++;
-        it++;
-    }
-}
-
-EvolutionEncryptor::EvolutionEncryptor()
-{
-
 }
 
 EvolutionEncryptor::EvolutionEncryptor(int populationSize, double mutationRate, double entropy)
@@ -340,18 +315,18 @@ EvolutionEncryptor::EvolutionEncryptor(QString decryptionKey)
     setDecryptionKey(decryptionKey);
 }
 
-QImage EvolutionEncryptor::encrypt(QImage src)
+QImage EvolutionEncryptor::encrypt(const QImage &src)
 {
-    QByteArray hash = calculateHash(src);
+    auto hash = calculateHash(src);
     map->setX(getMapInit(hash));
     int length = src.height()*src.width()*3;
 
-    QVector<DNASequence*> masksPopulation = getInitialPopulation(length);
-    DNASequence *dnaImage = image2dna(src, encoding);
-    QVector<DNASequence*> maskedPopulation;
+    auto masksPopulation = getInitialPopulation(length);
+    auto dnaImage = image2dna(src, encoding);
+    QVector<DNASequence> maskedPopulation;
 
     for(int i = 0; i < populationSize; i++)
-        maskedPopulation.push_back(dnaImage->fSerialXOR(masksPopulation[i]));
+        maskedPopulation.push_back(dnaImage.fSerialXOR(masksPopulation[i]));
 
     QPair<double, int> maxEntropy;
     do{
@@ -364,32 +339,23 @@ QImage EvolutionEncryptor::encrypt(QImage src)
     double keyH = keys[maxEntropy.second][1];
     decryptionKey = QString::number(*reinterpret_cast<qlonglong*>(&keyL), 16).
              append(QString::number(*reinterpret_cast<qlonglong*>(&keyH), 16));
-    QImage result = dna2image(maskedPopulation[maxEntropy.second],encoding);
-    delete dnaImage;
-    for(int i = 0; i < populationSize; i++){
-        delete masksPopulation[i];
-        delete maskedPopulation[i];
-    }
-    return result;
+
+    return dna2image(maskedPopulation[maxEntropy.second],encoding);
 }
 
-QImage EvolutionEncryptor::decrypt(QImage src)
+QImage EvolutionEncryptor::decrypt(const QImage &src)
 {
-    DNASequence *dnaImage = image2dna(src, encoding);
+    auto dnaImage = image2dna(src, encoding);
     int length = src.height()*src.width()*3;
     qlonglong keyLll = decryptionKey.mid(0, decryptionKey.size()/2).toLongLong(nullptr, 16);
     qlonglong keyHll = decryptionKey.mid(decryptionKey.size()/2, decryptionKey.size()/2).toLongLong(nullptr, 16);
     double keyL = *reinterpret_cast<double*>(&keyLll);
     double keyH = *reinterpret_cast<double*>(&keyHll);
-    QVector<double> *seq = getChaoticSequence(length, keyL, keyH);
-    DNASequence *dnaMask = getDnaMask(seq);
-    DNASequence *rawImage = dnaImage->iSerialXOR(dnaMask);
-    QImage result = dna2image(rawImage, encoding);
-    delete dnaMask;
-    delete rawImage;
-    delete dnaImage;
-    delete seq;
-    return result;
+
+    auto seq = getChaoticSequence(length, keyL, keyH);
+    auto dnaMask = getDnaMask(seq);
+    auto rawImage = dnaImage.iSerialXOR(dnaMask);
+    return dna2image(rawImage, encoding);
 }
 
 void EvolutionEncryptor::setRandomParameters()

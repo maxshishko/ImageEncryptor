@@ -17,7 +17,7 @@ private:
                                     {1,2,3,0}};
 
 public:
-    DNA();
+    DNA() = default;
     explicit DNA(Nucleotide value);
     explicit DNA(int value, int encoding = 0);
 

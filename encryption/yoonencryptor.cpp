@@ -6,42 +6,45 @@ YoonEncryptor::YoonEncryptor(double init, double param, int K){
     setK(K);
 }
 
-QImage YoonEncryptor::encrypt(QImage src)
+QImage YoonEncryptor::encrypt(const QImage &src)
 {
-    if(src.height() > src.width())
-        src = src.transformed(QTransform().rotate(90));
+    auto result = src;
+    if(result.height() > result.width())
+        result = result.transformed(QTransform().rotate(90));
 
-    QVector<int> seed = dividers(src.height());
+    QVector<int> seed = dividers(result.height());
     int **lookUpTable = createLUT(seed);
     QImage tempImage;
     int red,green,blue;
     QColor oldColor;
     for(int r = 0; r < K; r++){
-        tempImage = src;
-        int **mask = createMask(src.height());
-        for(int i = 0; i < src.height(); i++){
-            for(int j = 0; j < src.width(); j++){
+        tempImage = result;
+        int **mask = createMask(result.height());
+        for(int i = 0; i < result.height(); i++){
+            for(int j = 0; j < result.width(); j++){
                 oldColor = tempImage.pixelColor(j, i);
                 red   = oldColor.red()^mask[lookUpTable[i][j]][j];
                 green = oldColor.green()^mask[lookUpTable[i][j]][j];
                 blue  = oldColor.blue()^mask[lookUpTable[i][j]][j];
-                src.setPixelColor(j, lookUpTable[i][j], QColor(red, green, blue));
+                result.setPixelColor(j, lookUpTable[i][j], QColor(red, green, blue));
             }
         }
-        freeMemory(mask, src.height());
+        freeMemory(mask, result.height());
     }
-    freeMemory(lookUpTable, src.height());
+    freeMemory(lookUpTable, result.height());
 
-    if(src.height() > src.width())
-        src = src.transformed(QTransform().rotate(-90));
-    return src;
+    if(result.height() > result.width())
+        result = result.transformed(QTransform().rotate(-90));
+    return result;
 }
 
-QImage YoonEncryptor::decrypt(QImage src)
-{    if(src.height() > src.width())
-        src = src.transformed(QTransform().rotate(90));
+QImage YoonEncryptor::decrypt(const QImage &src)
+{
+    auto result = src;
+    if(result.height() > result.width())
+        result = result.transformed(QTransform().rotate(90));
 
-    QVector<int> seed = dividers(src.height());
+    QVector<int> seed = dividers(result.height());
     int **lookUpTable = createLUT(seed);
     QImage tempImage;
     int red,green,blue;
@@ -49,28 +52,28 @@ QImage YoonEncryptor::decrypt(QImage src)
 
     double modInit = map.getX();
     for(int r = 0; r < K; r++){
-        tempImage = src;
+        tempImage = result;
         map.setX(modInit);
         for(int i = 0; i < K - 1 - r; i++ )
-            for(int j = 0; j < src.height()*src.height(); j++)
+            for(int j = 0; j < result.height()*result.height(); j++)
                 map.next();
-        int **mask = createMask(src.height());
-        for(int i = 0; i < src.height(); i++){
-            for(int j = 0; j < src.width(); j++){
+        int **mask = createMask(result.height());
+        for(int i = 0; i < result.height(); i++){
+            for(int j = 0; j < result.width(); j++){
                 oldColor = tempImage.pixelColor(j, lookUpTable[i][j]);
                 red   = oldColor.red()^mask[lookUpTable[i][j]][j];
                 green = oldColor.green()^mask[lookUpTable[i][j]][j];
                 blue  = oldColor.blue()^mask[lookUpTable[i][j]][j];
-                src.setPixelColor(j, i, QColor(red, green, blue));
+                result.setPixelColor(j, i, QColor(red, green, blue));
             }
         }
-        freeMemory(mask, src.height());
+        freeMemory(mask, result.height());
     }
-    freeMemory(lookUpTable, src.height());
+    freeMemory(lookUpTable, result.height());
 
-    if(src.height() > src.width())
-        src = src.transformed(QTransform().rotate(-90));
-    return src;
+    if(result.height() > result.width())
+        result = result.transformed(QTransform().rotate(-90));
+    return result;
 }
 
 void YoonEncryptor::setRandomParameters()
@@ -125,7 +128,7 @@ void YoonEncryptor::setParam(double value)
     param = map.getParam();
 }
 
-int **YoonEncryptor::createLUT(QVector<int> seed)
+int **YoonEncryptor::createLUT(const QVector<int> &seed)
 {
     int **lut = createSmallMatrix(seed[0]);
     shuffleMatrix(lut, seed[0]);

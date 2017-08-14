@@ -12,7 +12,7 @@ class AnalysisResultWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit AnalysisResultWindow(QWidget *parent, QVector<double> data);
+    explicit AnalysisResultWindow(QWidget *parent, const QVector<double> &data);
     ~AnalysisResultWindow();
 
 private:

@@ -6,6 +6,7 @@
 #include <QImageReader>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <memory>
 
 #include "imageencryptormodel.h"
 #include "imageencryptorpresenter.h"
@@ -23,12 +24,14 @@ class MainWindow : public QMainWindow, public ImageEncryptorPresenter
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(const std::shared_ptr<ImageEncryptorModel> &model, QWidget *parent = nullptr);
     ~MainWindow();
 
     void updateImages();
 
     void updateParameters();
+
+    void setModel(const std::shared_ptr<ImageEncryptorModel> &value);
 
 private slots:
     void on_actionOpen_triggered();
@@ -70,7 +73,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    ImageEncryptorModel *model;
+
+    std::shared_ptr<ImageEncryptorModel> model;
 
     QFileDialog *createImageFileDialog(int acceptMode);
 

@@ -32,11 +32,11 @@ private:
     QwtPlotHistogram *histGreen = new QwtPlotHistogram;
     QwtPlotHistogram *histBlue = new QwtPlotHistogram;
 
-    void createHistogram(QVector<int> samples, QwtPlot *plot, QwtPlotHistogram *hist, Color color);
+    void createHistogram(const QVector<int> &samples, QwtPlot *plot, QwtPlotHistogram *hist, Color color);
     void exportAsImage();
     bool saveImage(QString filename);
 public:
-    HistogramWindow(QWidget *parent, QVector<QVector<int> > data);
+    HistogramWindow(QWidget *parent, const QVector<QVector<int>> &data);
     ~HistogramWindow();
 
 private slots:

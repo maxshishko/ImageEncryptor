@@ -1,7 +1,7 @@
 #include "analysisresultwindow.h"
 #include "ui_analysisresultwindow.h"
 
-AnalysisResultWindow::AnalysisResultWindow(QWidget *parent, QVector<double> data) :
+AnalysisResultWindow::AnalysisResultWindow(QWidget *parent, const QVector<double> &data) :
     QMainWindow(parent),
     ui(new Ui::AnalysisResultWindow)
 {

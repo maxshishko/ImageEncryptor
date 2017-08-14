@@ -2,6 +2,7 @@
 #define IMAGEENCRYPTORMODEL_H
 
 #include <QImage>
+#include <memory>
 
 #include "imageencryptorpresenter.h"
 #include "encryption/imageencryptor.h"
@@ -15,22 +16,20 @@ class ImageEncryptorModel
 {
 private:
 
-    ImageEncryptorPresenter *presenter;
+    std::weak_ptr<ImageEncryptorPresenter> presenter;
 
     QImage srcImage;
     QImage dstImage;
 
-    ImageEncryptor *encryptor;
+    std::shared_ptr<ImageEncryptor> encryptor = std::make_shared<EvolutionEncryptor>();
 
-    ChaoticMap3D *getChaoticMap(int map);
+    std::unique_ptr<ChaoticMap3D> getChaoticMap(int map);
 
 public:
     enum EncryptionMethods{DNA, Yoon, EvolutionAlgorithm};
 
-    ImageEncryptorModel(ImageEncryptorPresenter *presenter);
-
-    bool loadSrcImage(const QString filename);
-    bool saveDstImage(const QString filename);
+    bool loadSrcImage(const QString &filename);
+    bool saveDstImage(const QString &filename);
     void swapPlainCipher();
 
     QImage getSrcImage() const;
@@ -65,6 +64,7 @@ public:
     QVector<double> getUACI();
     double getEncryptionTime();
     bool fullAnalysis(QString filename, bool useRandomParams = false,  int numSimulations = 1);
+    void setPresenter(const std::shared_ptr<ImageEncryptorPresenter> &value);
 };
 
 #endif // IMAGEENCRYPTORMODEL_H

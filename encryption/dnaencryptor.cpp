@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QTextStream>
 
-QByteArray DNAEncryptor::calculateHash(QImage image)
+QByteArray DNAEncryptor::calculateHash(const QImage &image)
 {
     QByteArray ba;
     QBuffer buffer(&ba);
@@ -23,41 +23,41 @@ void DNAEncryptor::modifyInit()
     map->setZ(z+getModification(hash.mid(22)));
 }
 
-double DNAEncryptor::getModification(QByteArray ba)
+double DNAEncryptor::getModification(const QByteArray &ba)
 {
     char result;
-    foreach (char value, ba)
+    for (char value: ba)
         result = result^value;
     uchar ucresult = *reinterpret_cast<uchar*>(&result);
     double res = ((double)ucresult)/256.;
     return res;
 }
 
-QVector<DNASequence*> DNAEncryptor::image2dna(QImage src)
+DNAEncryptor::VecDNASequence DNAEncryptor::image2dna(const QImage &src)
 {
-    QVector<DNASequence*> result;
-    result.push_back(new DNASequence);
-    result.push_back(new DNASequence);
-    result.push_back(new DNASequence);
+    VecDNASequence result;
+    result.push_back(DNASequence());
+    result.push_back(DNASequence());
+    result.push_back(DNASequence());
     for(int i = 0; i < src.width(); i++){
         for(int j = 0; j < src.height(); j++){
             uchar   r = static_cast<uchar>(src.pixelColor(i,j).red()),
                     g = static_cast<uchar>(src.pixelColor(i,j).green()),
                     b = static_cast<uchar>(src.pixelColor(i,j).blue());
-            result[0]->push_back(r, encoding);
-            result[1]->push_back(g, encoding);
-            result[2]->push_back(b, encoding);
+            result[0].push_back(r, encoding);
+            result[1].push_back(g, encoding);
+            result[2].push_back(b, encoding);
         }
     }
     return result;
 }
 
-QImage DNAEncryptor::dna2image(QVector<DNASequence*> seq, int width, int height)
+QImage DNAEncryptor::dna2image(VecDNASequence seq, int width, int height)
 {
     QImage result(width, height, QImage::Format_RGB888);
-    QByteArray  rArray  = seq[0]->toByteArray(encoding),
-                gArray  = seq[1]->toByteArray(encoding),
-                bArray  = seq[2]->toByteArray(encoding);
+    QByteArray  rArray  = seq[0].toByteArray(encoding),
+                gArray  = seq[1].toByteArray(encoding),
+                bArray  = seq[2].toByteArray(encoding);
     for(int i = 0; i < width; i++){
         for(int j = 0; j < height; j++){
             char    r = rArray[i*height+j],
@@ -72,63 +72,58 @@ QImage DNAEncryptor::dna2image(QVector<DNASequence*> seq, int width, int height)
     return result;
 }
 
-QVector<QMultiMap<double, int>* > DNAEncryptor::generateChaoticSequence(ChaoticMap3D *map, int size)
+DNAEncryptor::ChaoticSequences DNAEncryptor::generateChaoticSequence(int size)
 {
-    QVector<QMultiMap<double, int>* > chSequence;
-    chSequence.push_back(new QMultiMap<double, int>);
-    chSequence.push_back(new QMultiMap<double, int>);
-    chSequence.push_back(new QMultiMap<double, int>);
+    ChaoticSequences chSequences;
+    chSequences.push_back(QMultiMap<double, int>());
+    chSequences.push_back(QMultiMap<double, int>());
+    chSequences.push_back(QMultiMap<double, int>());
 
     for(int i = 0; i < size; i++){
-        chSequence[0]->insert(map->getX(), i);
-        chSequence[1]->insert(map->getY(), i);
-        chSequence[2]->insert(map->getZ(), i);
+        chSequences[0].insert(map->getX(), i);
+        chSequences[1].insert(map->getY(), i);
+        chSequences[2].insert(map->getZ(), i);
         map->next();
     }
-    return chSequence;
+    return chSequences;
 }
 
-void DNAEncryptor::diffusion(QVector<DNASequence *> &image, DNASequence *mask)
+void DNAEncryptor::diffusion(VecDNASequence &image, const DNASequence &mask)
 {
-    DNASequence* xoredColorPlane;
+    DNASequence xoredColorPlane;
     for(int c = 0; c < image.size(); c++){
-        xoredColorPlane = new DNASequence((*image[c])^(*mask));
-        delete image[c];
-        image[c] = xoredColorPlane;
+        xoredColorPlane = image[c]^mask;
+        image[c] = std::move(xoredColorPlane);
     }
 }
 
-void DNAEncryptor::fpermutation(QVector<DNASequence *> &image, ChaoticMap3D *map)
+void DNAEncryptor::fpermutation(VecDNASequence &image)
 {
-    QVector<QMultiMap<double, int>*> chaoticSequence = generateChaoticSequence(map, image[0]->size());
-    DNASequence* confusedColorPlane;
+    auto chaoticSequence = generateChaoticSequence(image[0].size());
     for(int c = 0; c < image.size(); c++){
-        confusedColorPlane = new DNASequence;
-        for(QMultiMap<double, int>::iterator it = chaoticSequence[c]->begin();
-            it != chaoticSequence[c]->end(); it++){
-            confusedColorPlane->push_back((*image[c])[it.value()]);
+        DNASequence confusedColorPlane;
+        for(auto it = chaoticSequence[c].begin();
+            it != chaoticSequence[c].end(); ++it){
+            confusedColorPlane.push_back(image[c][it.value()]);
         }
-        delete image[c];
-        image[c] = confusedColorPlane;
+        image[c] = std::move(confusedColorPlane);
     }
 }
 
-void DNAEncryptor::ipermutation(QVector<DNASequence *> &image, ChaoticMap3D *map)
+void DNAEncryptor::ipermutation(VecDNASequence &image)
 {
-    QVector<QMultiMap<double, int>*> chaoticSequence = generateChaoticSequence(map, image[0]->size());
-    DNASequence* confusedColorPlane;
+    auto chaoticSequence = generateChaoticSequence(image[0].size());
     for(int c = 0; c < image.size(); c++){
-        confusedColorPlane = new DNASequence(image[c]->size());
-        QMultiMap<double, int>::iterator it = chaoticSequence[c]->begin();
-        for(int i = 0; i < image[c]->size(); i++, it++)
-            (*confusedColorPlane)[it.value()] = (*(image[c]))[i];
-        delete image[c];
-        image[c] = confusedColorPlane;
+        DNASequence confusedColorPlane(image[c].size());
+        auto it = chaoticSequence[c].begin();
+        for(int i = 0; i < image[c].size(); i++, it++)
+            confusedColorPlane[it.value()] = image[c][i];
+        image[c] = std::move(confusedColorPlane);
     }
 }
 
-DNAEncryptor::DNAEncryptor(ChaoticMap3D *map, int encoding, QString hash):
-    map(map)
+DNAEncryptor::DNAEncryptor(ChaoticMap3DUptr &&map, int encoding, QString hash):
+    map(std::move(map))
 {
     setEncoding(encoding);
     setHash(hash);
@@ -136,7 +131,6 @@ DNAEncryptor::DNAEncryptor(ChaoticMap3D *map, int encoding, QString hash):
 
 DNAEncryptor::~DNAEncryptor()
 {
-    delete map;
 }
 
 QString DNAEncryptor::getHash() const
@@ -199,43 +193,30 @@ void DNAEncryptor::setZ(double value)
     z = value;
 }
 
-ChaoticMap3D *DNAEncryptor::getMap() const
+void DNAEncryptor::setMap(ChaoticMap3DUptr &&value)
 {
-    return map;
+    map = std::move(value);
 }
 
-void DNAEncryptor::setMap(ChaoticMap3D *value)
-{
-    map = value;
-}
-
-QImage DNAEncryptor::encrypt(QImage src)
+QImage DNAEncryptor::encrypt(const QImage &src)
 {
     hash = calculateHash(src);
     modifyInit();
-    DNASequence* dnaHash = new DNASequence(hash, encoding);
-    QVector<DNASequence*> dnaImage = image2dna(src);
-    fpermutation(dnaImage, map);
+    DNASequence dnaHash(hash, encoding);
+    VecDNASequence dnaImage = image2dna(src);
+    fpermutation(dnaImage);
     diffusion(dnaImage, dnaHash);
-    QImage result = dna2image(dnaImage, src.height(), src.width());
-    for(int i = 0; i < dnaImage.size(); i++)
-        delete dnaImage[i];
-    delete dnaHash;
-    return result;
+    return dna2image(dnaImage, src.height(), src.width());
 }
 
-QImage DNAEncryptor::decrypt(QImage src)
+QImage DNAEncryptor::decrypt(const QImage &src)
 {
     modifyInit();
-    DNASequence* dnaHash = new DNASequence(hash, encoding);
-    QVector<DNASequence*> dnaImage = image2dna(src);
+    DNASequence dnaHash(hash, encoding);
+    VecDNASequence dnaImage = image2dna(src);
     diffusion(dnaImage, dnaHash);
-    ipermutation(dnaImage, map);
-    QImage result = dna2image(dnaImage, src.height(), src.width());
-    for(int i = 0; i < dnaImage.size(); i++)
-        delete dnaImage[i];
-    delete dnaHash;
-    return result;
+    ipermutation(dnaImage);
+    return dna2image(dnaImage, src.height(), src.width());
 }
 
 void DNAEncryptor::setRandomParameters()

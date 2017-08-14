@@ -16,24 +16,25 @@ protected:
 
 public:
     DNASequence();
-    DNASequence(QByteArray ba, int encoding);
-    DNASequence(const DNASequence &seq);
-    DNASequence(DNASequence &&seq);
+    DNASequence(const QByteArray &ba, int encoding);
     explicit DNASequence(int size);
 
-    void push_back(DNA el);
+    void push_back(const DNA &el);
     void push_back(uchar byte, int encoding);
     void pop_back();
     void clear();
     int size() const;
-    void append(DNASequence seq);
+    void append(const DNASequence &seq);
+    void append(DNASequence &&seq);
+    void append(const DNA &el);
     DNASequence mid(int pos, int len = -1);
-    DNASequence operator^(DNASequence &r);
-    DNASequence *fSerialXOR(DNASequence *mask);
-    DNASequence *iSerialXOR(DNASequence *mask);
-    QByteArray toByteArray(int encoding);
+    DNASequence operator ^(const DNASequence &r) const;
+    DNASequence fSerialXOR(const DNASequence &mask);
+    DNASequence iSerialXOR(const DNASequence &mask);
+    QByteArray toByteArray(int encoding) const;
     DNA &operator[](int index);
-    void crossover(DNASequence* second, int point);
+    const DNA &operator [](int index) const;
+    void crossover(DNASequence &second, int point);
     bool swap(int i, int j);
 };
 

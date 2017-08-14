@@ -11,16 +11,15 @@ QVector<QPoint> Analysis::getRandomPixelset(int sizex, int sizey, int setSize)
     return set;
 }
 
-double Analysis::mean(QVector<double> sequence)
+double Analysis::calcCorrelation(const QVector<double> &samplesX, const QVector<double> &samplesY)
 {
-    double sum = 0;
-    foreach (double el, sequence)
-        sum+=el;
-    return sum / sequence.size();
-}
+    auto mean = [](auto seq){
+        double sum;
+        for(auto el:seq)
+            sum+=el;
+        return sum/seq.size();
+    };
 
-double Analysis::calcCorrelation(QVector<double> samplesX, QVector<double> samplesY)
-{
     double r = 0, divX = 0, divY = 0, meanX = 0, meanY = 0;
     meanX = mean(samplesX);
     meanY = mean(samplesY);
@@ -32,15 +31,15 @@ double Analysis::calcCorrelation(QVector<double> samplesX, QVector<double> sampl
     return r/sqrt(divX*divY);
 }
 
-void Analysis::writeVector(QTextStream *stream, QVector<double> vector)
+void Analysis::writeVector(QTextStream &stream, const QVector<double> &vector)
 {
     for(int i = 0; i < vector.size(); i++)
-        (*stream) << vector[i] << ';';
+        stream << vector[i] << ';';
 }
 
-QVector<QVector<int> > Analysis::histogram(QImage image)
+QVector<QVector<int>> Analysis::histogram(const QImage &image)
 {
-    QVector<QVector<int> > hist(3, QVector<int>(256, 0));
+    QVector<QVector<int>> hist(3, QVector<int>(256, 0));
 
     QColor color;
     for(int i = 0; i < image.width(); i++){
@@ -54,10 +53,10 @@ QVector<QVector<int> > Analysis::histogram(QImage image)
     return hist;
 }
 
-QVector<double> Analysis::correlation(QImage image, Analysis::CorrelationType type, int pixelSetSize)
+QVector<double> Analysis::correlation(const QImage &image, Analysis::CorrelationType type, int pixelSetSize)
 {
 
-    QVector<QVector<QVector<double> > > dataSet = getCorrelationData(image, type, pixelSetSize);
+    auto dataSet = getCorrelationData(image, type, pixelSetSize);
     QVector<double> result;
     result.push_back(calcCorrelation(dataSet[0][0], dataSet[0][1]));
     result.push_back(calcCorrelation(dataSet[1][0], dataSet[1][1]));
@@ -66,16 +65,16 @@ QVector<double> Analysis::correlation(QImage image, Analysis::CorrelationType ty
     return result;
 }
 
-QVector<QVector<QVector<double> > > Analysis::getCorrelationData(QImage image, Analysis::CorrelationType type, int pixelSetSize)
+QVector<QVector<QVector<double>>> Analysis::getCorrelationData(const QImage &image, Analysis::CorrelationType type, int pixelSetSize)
 {
-    int dx = corrMask[type][0], dy = corrMask[type][1];
+    int dx = corrMask[static_cast<int>(type)][0], dy = corrMask[static_cast<int>(type)][1];
 
     if(pixelSetSize>image.width()*image.height())
         pixelSetSize = image.width()*image.height()/2;
 
-    QVector<QPoint> pixelSet = getRandomPixelset(image.width()-dx, image.height()-dy, pixelSetSize);
-    QVector<QVector<QVector<double> > > dataSet(3, QVector<QVector<double> >(2, QVector<double>()));
-    foreach (QPoint point, pixelSet) {
+    auto pixelSet = getRandomPixelset(image.width()-dx, image.height()-dy, pixelSetSize);
+    QVector<QVector<QVector<double>>> dataSet(3, QVector<QVector<double>>(2, QVector<double>()));
+    for (auto point: pixelSet) {
         dataSet[0][0].push_back(image.pixelColor(point).redF());
         dataSet[0][1].push_back(image.pixelColor(point+QPoint(dx, dy)).redF());
         dataSet[1][0].push_back(image.pixelColor(point).greenF());
@@ -86,9 +85,9 @@ QVector<QVector<QVector<double> > > Analysis::getCorrelationData(QImage image, A
     return dataSet;
 }
 
-QVector<double> Analysis::entropy(QImage image)
+QVector<double> Analysis::entropy(const QImage &image)
 {
-    QVector<QVector<double> > colors(3, QVector<double>(256, 0));
+    QVector<QVector<double>> colors(3, QVector<double>(256, 0));
 
     for(int i = 0; i < image.width(); i++)
         for(int j = 0; j < image.height(); j++){
@@ -102,7 +101,7 @@ QVector<double> Analysis::entropy(QImage image)
     QVector<double> result;
     for(int c = 0; c < 3; c++){
         double ent = 0;
-        foreach (double el, colors[c]) {
+        for(auto el: colors[c]) {
             double p = el/size;
             if(p < 1e-6)
                 continue;
@@ -114,10 +113,10 @@ QVector<double> Analysis::entropy(QImage image)
     return result;
 }
 
-QVector<double> Analysis::NPCR(ImageEncryptor *encryptor, QImage image)
+QVector<double> Analysis::NPCR(ImgEncryptorPtr encryptor, QImage image)
 {
     QVector<double> result(3, 0);
-    QImage modifiedImage = image;
+    auto modifiedImage = image;
     modifiedImage.setPixelColor(rand()%image.width(),
                                 rand()%image.height(),
                                 QColor(rand()%256, rand()%256, rand()%256));
@@ -143,7 +142,7 @@ QVector<double> Analysis::NPCR(ImageEncryptor *encryptor, QImage image)
     return result;
 }
 
-QVector<double> Analysis::UACI(ImageEncryptor *encryptor, QImage image)
+QVector<double> Analysis::UACI(ImgEncryptorPtr encryptor, QImage image)
 {
     QVector<double> result(3, 0);
     QImage modifiedImage = image;
@@ -169,14 +168,14 @@ QVector<double> Analysis::UACI(ImageEncryptor *encryptor, QImage image)
     return result;
 }
 
-double Analysis::encryptionTime(ImageEncryptor *encryptor, QImage image)
+double Analysis::encryptionTime(ImgEncryptorPtr encryptor, const QImage &image)
 {
     int begin = clock();
     encryptor->encrypt(image);
     return static_cast<double>(clock()-begin)/1000.;
 }
 
-bool Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString filename, bool useRandomParams, int numSimulations)
+bool Analysis::fullAnalysis(ImgEncryptorPtr encryptor, const QImage &image, const QString &filename, bool useRandomParams, int numSimulations)
 {
     QFile file(filename);
     if(file.open(QIODevice::WriteOnly)){
@@ -188,12 +187,12 @@ bool Analysis::fullAnalysis(ImageEncryptor *encryptor, QImage image, QString fil
                 encryptor->setRandomParameters();
             QImage encImage = encryptor->encrypt(image);
             stream << encryptor->parametersToString();
-            writeVector(&stream, correlation(encImage, CorrelationType::CORR_H));
-            writeVector(&stream, correlation(encImage, CorrelationType::CORR_V));
-            writeVector(&stream, correlation(encImage, CorrelationType::CORR_D));
-            writeVector(&stream, entropy(encImage));
-            writeVector(&stream, NPCR(encryptor, image));
-            writeVector(&stream, UACI(encryptor, image));
+            writeVector(stream, correlation(encImage, CorrelationType::CORR_H));
+            writeVector(stream, correlation(encImage, CorrelationType::CORR_V));
+            writeVector(stream, correlation(encImage, CorrelationType::CORR_D));
+            writeVector(stream, entropy(encImage));
+            writeVector(stream, NPCR(encryptor, image));
+            writeVector(stream, UACI(encryptor, image));
             stream << encryptionTime(encryptor, image) << "\n";
         }
         file.close();

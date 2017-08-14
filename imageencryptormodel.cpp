@@ -14,8 +14,10 @@ bool ImageEncryptorModel::encrypt()
 {
     if(!srcImage.isNull()){
         dstImage = encryptor->encrypt(srcImage);
-        presenter->updateImages();
-        presenter->updateParameters();
+        if(auto presenterShared = presenter.lock()){
+            presenterShared->updateImages();
+            presenterShared->updateParameters();
+        }
     }
     return false;
 }
@@ -24,7 +26,8 @@ bool ImageEncryptorModel::decrypt()
 {
     if(!srcImage.isNull()){
         dstImage = encryptor->decrypt(srcImage);
-        presenter->updateImages();
+        if(auto presenterShared = presenter.lock())
+            presenterShared->updateImages();
         return true;
     }
     return false;
@@ -33,28 +36,26 @@ bool ImageEncryptorModel::decrypt()
 void ImageEncryptorModel::setRandomParameters()
 {
     encryptor->setRandomParameters();
-    presenter->updateParameters();
+    if(auto presenterShared = presenter.lock())
+        presenterShared->updateParameters();
 }
 
 void ImageEncryptorModel::changeEncryptor(int encryptor)
 {
     switch (encryptor) {
     case EncryptionMethods::DNA:
-        if(!dynamic_cast<DNAEncryptor*>(this->encryptor)){
-            delete this->encryptor;
-            this->encryptor = new DNAEncryptor();
+        if(!std::dynamic_pointer_cast<DNAEncryptor>(this->encryptor)){
+            this->encryptor = std::make_shared<DNAEncryptor>();
         }
         break;
     case EncryptionMethods::Yoon:
-        if(!dynamic_cast<YoonEncryptor*>(this->encryptor)){
-            delete this->encryptor;
-            this->encryptor = new YoonEncryptor();
+        if(!std::dynamic_pointer_cast<YoonEncryptor>(this->encryptor)){
+            this->encryptor = std::make_shared<YoonEncryptor>();
         }
         break;
     case EncryptionMethods::EvolutionAlgorithm:
-        if(!dynamic_cast<EvolutionEncryptor*>(this->encryptor)){
-            delete this->encryptor;
-            this->encryptor = new EvolutionEncryptor();
+        if(!std::dynamic_pointer_cast<EvolutionEncryptor>(this->encryptor)){
+            this->encryptor = std::make_shared<EvolutionEncryptor>();
         }
         break;
     default:
@@ -64,7 +65,7 @@ void ImageEncryptorModel::changeEncryptor(int encryptor)
 
 void ImageEncryptorModel::setEvolutionEncryptorParameters(int popSize, double mutationRate, double entropy)
 {
-    EvolutionEncryptor *evEncryptor = dynamic_cast<EvolutionEncryptor*>(encryptor);
+    auto evEncryptor = std::dynamic_pointer_cast<EvolutionEncryptor>(encryptor);
     if(!evEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     evEncryptor->setPopulationSize(popSize);
@@ -74,7 +75,7 @@ void ImageEncryptorModel::setEvolutionEncryptorParameters(int popSize, double mu
 
 void ImageEncryptorModel::setEvolutionEncryptorParameters(QString decryptionKey)
 {
-    EvolutionEncryptor *evEncryptor = dynamic_cast<EvolutionEncryptor*>(encryptor);
+    auto evEncryptor = std::dynamic_pointer_cast<EvolutionEncryptor>(encryptor);
     if(!evEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     evEncryptor->setDecryptionKey(decryptionKey);
@@ -82,7 +83,7 @@ void ImageEncryptorModel::setEvolutionEncryptorParameters(QString decryptionKey)
 
 bool ImageEncryptorModel::getEvolutionEncryptorParameters(int &popSize, double &mutationRate, double &entropy)
 {
-    EvolutionEncryptor *evEncryptor = dynamic_cast<EvolutionEncryptor*>(encryptor);
+    auto evEncryptor = std::dynamic_pointer_cast<EvolutionEncryptor>(encryptor);
     if(!evEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     popSize = evEncryptor->getPopulationSize();
@@ -92,7 +93,7 @@ bool ImageEncryptorModel::getEvolutionEncryptorParameters(int &popSize, double &
 
 bool ImageEncryptorModel::getEvolutionEncryptorParameters(QString &decryptionKey)
 {
-    EvolutionEncryptor *evEncryptor = dynamic_cast<EvolutionEncryptor*>(encryptor);
+    auto evEncryptor = std::dynamic_pointer_cast<EvolutionEncryptor>(encryptor);
     if(!evEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     decryptionKey = evEncryptor->getDecryptionKey();
@@ -100,7 +101,7 @@ bool ImageEncryptorModel::getEvolutionEncryptorParameters(QString &decryptionKey
 
 void ImageEncryptorModel::setDNAEncryptorParameters(double x, double y, double z, int map, int encoding, QString hash)
 {
-    DNAEncryptor *dnaEncryptor = dynamic_cast<DNAEncryptor*>(encryptor);
+    auto dnaEncryptor = std::dynamic_pointer_cast<DNAEncryptor>(encryptor);
     if(!dnaEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     dnaEncryptor->setMap(getChaoticMap(map));
@@ -115,7 +116,7 @@ void ImageEncryptorModel::setDNAEncryptorParameters(double x, double y, double z
 
 bool ImageEncryptorModel::getDNAEncryptorParameters(double &x, double &y, double &z, int &encoding, QString &hash)
 {
-    DNAEncryptor *dnaEncryptor = dynamic_cast<DNAEncryptor*>(encryptor);
+    auto dnaEncryptor = std::dynamic_pointer_cast<DNAEncryptor>(encryptor);
     if(!dnaEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     x = dnaEncryptor->getX();
@@ -127,7 +128,7 @@ bool ImageEncryptorModel::getDNAEncryptorParameters(double &x, double &y, double
 
 void ImageEncryptorModel::setYoonEncryptorParameters(double init, double param, double K)
 {
-    YoonEncryptor *yoonEncryptor = dynamic_cast<YoonEncryptor*>(encryptor);
+    auto yoonEncryptor = std::dynamic_pointer_cast<YoonEncryptor>(encryptor);
     if(!yoonEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     yoonEncryptor->setInit(init);
@@ -137,7 +138,7 @@ void ImageEncryptorModel::setYoonEncryptorParameters(double init, double param, 
 
 bool ImageEncryptorModel::getYoonEncryptorParameters(double &init, double &param, int &K)
 {
-    YoonEncryptor *yoonEncryptor = dynamic_cast<YoonEncryptor*>(encryptor);
+    auto yoonEncryptor = std::dynamic_pointer_cast<YoonEncryptor>(encryptor);
     if(!yoonEncryptor)
         throw std::logic_error("Invalid encryptor selected.");
     init = yoonEncryptor->getInit();
@@ -233,42 +234,51 @@ bool ImageEncryptorModel::fullAnalysis(QString filename, bool useRandomParams, i
     return Analysis::fullAnalysis(encryptor, srcImage, filename,useRandomParams, numSimulations);
 }
 
-ChaoticMap3D *ImageEncryptorModel::getChaoticMap(int map)
+std::unique_ptr<ChaoticMap3D> ImageEncryptorModel:: getChaoticMap(int map)
 {
     switch (map) {
     case 0:
-        return new LorenzMap;
+        return std::make_unique<LorenzMap>();
     case 1:
-        return new Combined3DMap(new PWLCM, new PWLCM, new PWLCM);
+        return std::make_unique<Combined3DMap>(
+                    std::make_unique<PWLCM>(),
+                    std::make_unique<PWLCM>(),
+                    std::make_unique<PWLCM>());
     case 2:
-        return new Combined3DMap(new LogisticMap, new LogisticMap, new LogisticMap);
+        return std::make_unique<Combined3DMap>(
+                    std::make_unique<LogisticMap>(),
+                    std::make_unique<LogisticMap>(),
+                    std::make_unique<LogisticMap>());
     case 3:
-        return new Combined3DMap(new TentMap, new TentMap, new TentMap);
+        return std::make_unique<Combined3DMap>(
+                    std::make_unique<TentMap>(),
+                    std::make_unique<TentMap>(),
+                    std::make_unique<TentMap>());
     case 4:
-        return new Baker3DMap;
+        return std::make_unique<Baker3DMap>();
     }
-    return new LorenzMap;
+    return std::make_unique<LorenzMap>();
 }
 
-ImageEncryptorModel::ImageEncryptorModel(ImageEncryptorPresenter *presenter):
-    presenter(presenter)
+void ImageEncryptorModel::setPresenter(const std::shared_ptr<ImageEncryptorPresenter> &value)
 {
-    encryptor = new EvolutionEncryptor;
+    presenter = value;
 }
 
-bool ImageEncryptorModel::loadSrcImage(const QString filename)
+bool ImageEncryptorModel::loadSrcImage(const QString &filename)
 {
     QImage img = QImage(filename);
     if(!img.isNull()){
         srcImage = img;
         dstImage = QImage();
-        presenter->updateImages();
+        if(auto presShared = presenter.lock())
+            presShared->updateImages();
         return true;
     }
     return false;
 }
 
-bool ImageEncryptorModel::saveDstImage(const QString filename)
+bool ImageEncryptorModel::saveDstImage(const QString &filename)
 {
     if(!dstImage.isNull() && dstImage.save(filename))
         return true;
@@ -280,5 +290,6 @@ void ImageEncryptorModel::swapPlainCipher()
     QImage tmp = srcImage;
     srcImage.swap(dstImage);
     dstImage.swap(tmp);
-    presenter->updateImages();
+    if(auto presShared = presenter.lock())
+        presShared->updateImages();
 }

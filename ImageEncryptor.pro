@@ -6,6 +6,8 @@
 
 QT       += core gui
 
+CONFIG += c++14
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ImageEncryptor
@@ -26,7 +28,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageencryptormodel.cpp \
-    encryption/imageencryptor.cpp \
     encryption/evolutionencryptor.cpp \
     encryption/dnasequence.cpp \
     encryption/dna.cpp \
@@ -62,14 +63,20 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     resources.qrc
 
-unix|win32: LIBS += -L$$PWD/../build-ChaoticMaps-Desktop_Qt_5_9_1_MinGW_32bit-Release/release/ -lChaoticMaps
+INCLUDEPATH += $$PWD/../ChaoticMaps
+DEPENDPATH += $$PWD/../ChaoticMaps
+
+win32:CONFIG(release, debug|release): LIBS += -LC:/build-qwt-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/lib -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:/build-qwt-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/lib/ -lqwtd
+else:unix: LIBS += -LC:/build-qwt-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/lib/ -lqwt
+
+INCLUDEPATH += C:/qwt-6.1.3/include
+DEPENDPATH += C:/qwt-6.1.3/include
+
+win32: LIBS += -L$$PWD/../ChaoticMaps/release/ -lChaoticMaps
 
 INCLUDEPATH += $$PWD/../ChaoticMaps
 DEPENDPATH += $$PWD/../ChaoticMaps
 
-win32:CONFIG(release, debug|release): LIBS += -LC:/qwt-6.1.3/lib/ -lqwt
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:/qwt-6.1.3/lib/ -lqwtd
-else:unix: LIBS += -LC:/qwt-6.1.3/lib/ -lqwt
-
-INCLUDEPATH += C:/qwt-6.1.3/include
-DEPENDPATH += C:/qwt-6.1.3/include
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../ChaoticMaps/release/ChaoticMaps.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../ChaoticMaps/release/libChaoticMaps.a

@@ -17,7 +17,7 @@ class CorrelationWindow : public QMainWindow
 {
     Q_OBJECT
 
-    enum Color{RED, GREEN, BLUE};
+    enum class Color{RED, GREEN, BLUE};
 
     QwtPlot *plotRed = new QwtPlot;
     QwtPlot *plotGreen = new QwtPlot;
@@ -30,7 +30,7 @@ class CorrelationWindow : public QMainWindow
     void exportAsImage();
     bool saveImage(QString filename);
 public:
-    explicit CorrelationWindow(QWidget *parent, QVector<QVector<QVector<double> > > dataSet, QVector<double> correlation);
+    explicit CorrelationWindow(QWidget *parent, const QVector<QVector<QVector<double>>> &dataSet, const QVector<double> &correlation);
     ~CorrelationWindow();
 
 private slots:

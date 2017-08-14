@@ -12,7 +12,7 @@ private:
     double param;
     PWLCM map;
 
-    int **createLUT(QVector<int> seed);
+    int **createLUT(const QVector<int> &seed);
     int **createSmallMatrix(int size);
     int **createMask(int size);
     int **productMatrix(int **lmatrix, int lsize, int **rmatrix, int rsize);
@@ -25,11 +25,11 @@ public:
     YoonEncryptor();
     YoonEncryptor(double init, double param, int K);
 
-    QImage encrypt(QImage src);
-    QImage decrypt(QImage src);
+    QImage encrypt(const QImage &src) override;
+    QImage decrypt(const QImage &src) override;
 
-    void setRandomParameters();
-    QString parametersToString();
+    void setRandomParameters() override;
+    QString parametersToString() override;
 
     int getK() const;
     void setK(int value);

@@ -3,19 +3,17 @@
 
 #include <ctime>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(const std::shared_ptr<ImageEncryptorModel> &model, QWidget *parent) :
     QMainWindow(parent),
+    model(model),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    model = new ImageEncryptorModel(this);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete model;
 }
 
 void MainWindow::updateImages()
@@ -372,4 +370,9 @@ void MainWindow::on_actionFull_Analysis_triggered()
         else
             QMessageBox::information(this, QString(""), QString("Done!"));
     }
+}
+
+void MainWindow::setModel(const std::shared_ptr<ImageEncryptorModel> &value)
+{
+    model = value;
 }

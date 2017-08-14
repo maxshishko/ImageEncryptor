@@ -1,7 +1,7 @@
 #include "histogramwindow.h"
 #include "ui_histogramwindow.h"
 
-void HistogramWindow::createHistogram(QVector<int> data,
+void HistogramWindow::createHistogram(const QVector<int> &data,
                                       QwtPlot *plot,
                                       QwtPlotHistogram *hist,
                                       HistogramWindow::Color color)
@@ -76,7 +76,7 @@ bool HistogramWindow::saveImage(QString filename)
     return result.save(filename);
 }
 
-HistogramWindow::HistogramWindow(QWidget *parent, QVector<QVector<int> > data) :
+HistogramWindow::HistogramWindow(QWidget *parent, const QVector<QVector<int> > &data) :
     QMainWindow(parent),
     ui(new Ui::HistogramWindow)
 {

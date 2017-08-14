@@ -7,29 +7,34 @@
 #include "imageencryptor.h"
 #include "dnasequence.h"
 #include "chaoticmap3d.h"
+#include <memory>
 
 class DNAEncryptor : public ImageEncryptor
 {
 private:
+    using ChaoticMap3DUptr = std::unique_ptr<ChaoticMap3D>;
+    using VecDNASequence = QVector<DNASequence>;
+    using ChaoticSequences = QVector<QMultiMap<double, int>>;
+
     QByteArray hash;
     int encoding;
     double x, y, z;
-    ChaoticMap3D *map;
+    ChaoticMap3DUptr map;
 
     QByteArray imagePrefix;
 
-    QByteArray calculateHash(QImage image);
+    QByteArray calculateHash(const QImage &image);
     void modifyInit();
-    double getModification(QByteArray ba);
-    QVector<DNASequence *> image2dna(QImage src);
-    QImage dna2image(QVector<DNASequence *> seq, int width, int height);
-    QVector<QMultiMap<double, int> *> generateChaoticSequence(ChaoticMap3D *map, int size);
-    void diffusion(QVector<DNASequence *> &image, DNASequence* mask);
-    void fpermutation(QVector<DNASequence *> &image, ChaoticMap3D* map);
-    void ipermutation(QVector<DNASequence *> &image, ChaoticMap3D* map);
+    double getModification(const QByteArray &ba);
+    VecDNASequence image2dna(const QImage &src);
+    QImage dna2image(VecDNASequence seq, int width, int height);
+    ChaoticSequences generateChaoticSequence(int size);
+    void diffusion(VecDNASequence &image, const DNASequence &mask);
+    void fpermutation(VecDNASequence &image);
+    void ipermutation(VecDNASequence &image);
 public:
     DNAEncryptor(){}
-    DNAEncryptor(ChaoticMap3D *map,
+    DNAEncryptor(ChaoticMap3DUptr &&map,
                  int encoding,
                  QString hash = QString('0', 64));
     ~DNAEncryptor();
@@ -44,13 +49,12 @@ public:
     void setY(double value);
     double getZ() const;
     void setZ(double value);
-    ChaoticMap3D *getMap() const;
-    void setMap(ChaoticMap3D *value);
+    void setMap(ChaoticMap3DUptr &&value);
 
-    QImage encrypt(QImage src);
-    QImage decrypt(QImage src);
-    void setRandomParameters();
-    QString parametersToString();
+    QImage encrypt(const QImage &src) override;
+    QImage decrypt(const QImage &src) override;
+    void setRandomParameters() override;
+    QString parametersToString() override;
 };
 
 #endif // DNAENCRYPTOR_H

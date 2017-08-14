@@ -6,13 +6,13 @@ void CorrelationWindow::initScatter(QwtPlot *plot, QwtPlotCurve *curve, Correlat
 {
     QColor penColor;
     switch (color) {
-    case RED:
+    case Color::RED:
         penColor = QColor(255, 0, 0);
         break;
-    case GREEN:
+    case Color::GREEN:
         penColor = QColor(0, 255, 0);
         break;
-    case BLUE:
+    case Color::BLUE:
         penColor= QColor(0, 0, 255);
         break;
     }
@@ -64,7 +64,7 @@ bool CorrelationWindow::saveImage(QString filename)
     return result.save(filename);
 }
 
-CorrelationWindow::CorrelationWindow(QWidget *parent, QVector<QVector<QVector<double> > > dataSet, QVector<double> correlation) :
+CorrelationWindow::CorrelationWindow(QWidget *parent, const QVector<QVector<QVector<double>>> &dataSet, const QVector<double> &correlation) :
     QMainWindow(parent),
     ui(new Ui::CorrelationWindow)
 {
@@ -78,9 +78,9 @@ CorrelationWindow::CorrelationWindow(QWidget *parent, QVector<QVector<QVector<do
     curveGreen->setSamples(dataSet[1][0], dataSet[1][1]);
     curveBlue->setSamples(dataSet[2][0], dataSet[2][1]);
 
-    initScatter(plotRed, curveRed, RED);
-    initScatter(plotGreen, curveGreen, GREEN);
-    initScatter(plotBlue, curveBlue, BLUE);
+    initScatter(plotRed, curveRed, Color::RED);
+    initScatter(plotGreen, curveGreen, Color::GREEN);
+    initScatter(plotBlue, curveBlue, Color::BLUE);
 
     ui->horizontalLayoutScatters->addWidget(plotRed);
     ui->horizontalLayoutScatters->addWidget(plotGreen);
